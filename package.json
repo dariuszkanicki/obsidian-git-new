@@ -8,7 +8,7 @@
         "build": "node esbuild.config.mjs production",
         "release": "standard-version",
         "lint": "eslint src",
-        "format": "prettier --check src",
+        "format": "prettier --check --write src",
         "tsc": "tsc --noEmit",
         "svelte": "svelte-check",
         "all": "pnpm run tsc && pnpm run svelte && pnpm run format && pnpm run lint"
