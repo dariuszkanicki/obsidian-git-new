@@ -33,6 +33,7 @@ import { GeneralModal } from "./ui/modals/generalModal";
 import GitView from "./ui/sourceControl/sourceControl";
 import { BranchStatusBar } from "./ui/statusBar/branchStatusBar";
 import { convertPathToAbsoluteGitignoreRule, formatRemoteUrl, splitRemoteBranch } from "./utils";
+import { ObsidianNewGitSettingsTab } from "./dkani/setting/setting-tab";
 
 export default class ObsidianGit extends Plugin {
     gitManager: GitManager;
@@ -40,7 +41,7 @@ export default class ObsidianGit extends Plugin {
     tools = new Tools(this);
     localStorage = new LocalStorageSettings(this);
     settings: ObsidianGitSettings;
-    settingsTab?: ObsidianGitSettingsTab;
+    settingsTab?: ObsidianNewGitSettingsTab;
     statusBar?: StatusBar;
     branchBar?: BranchStatusBar;
     state: PluginState = {
@@ -113,7 +114,8 @@ export default class ObsidianGit extends Plugin {
         await this.loadSettings();
         await this.migrateSettings();
 
-        this.settingsTab = new ObsidianGitSettingsTab(this.app, this);
+        // this.settingsTab = new ObsidianGitSettingsTab(this.app, this);
+        this.settingsTab = new ObsidianNewGitSettingsTab(this.app, this);
         this.addSettingTab(this.settingsTab);
 
         if (!this.localStorage.getPluginDisabled()) {
