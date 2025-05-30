@@ -346,52 +346,27 @@ declare module "obsidian" {
         /**
          * Emitted when some git action has been completed and plugin has been refreshed
          */
-        on(
-            name: "obsidian-git:refreshed",
-            callback: () => void,
-            ctx?: unknown
-        ): EventRef;
+        on(name: "obsidian-git:refreshed", callback: () => void, ctx?: unknown): EventRef;
         /**
          * Emitted when some git action has been completed and the plugin should refresh
          */
-        on(
-            name: "obsidian-git:refresh",
-            callback: () => void,
-            ctx?: unknown
-        ): EventRef;
+        on(name: "obsidian-git:refresh", callback: () => void, ctx?: unknown): EventRef;
         /**
          * Emitted when the plugin is currently loading a new cached status.
          */
-        on(
-            name: "obsidian-git:loading-status",
-            callback: () => void,
-            ctx?: unknown
-        ): EventRef;
+        on(name: "obsidian-git:loading-status", callback: () => void, ctx?: unknown): EventRef;
         /**
          * Emitted when the HEAD changed.
          */
-        on(
-            name: "obsidian-git:head-change",
-            callback: () => void,
-            ctx?: unknown
-        ): EventRef;
+        on(name: "obsidian-git:head-change", callback: () => void, ctx?: unknown): EventRef;
         /**
          * Emitted when a new cached status is available.
          */
-        on(
-            name: "obsidian-git:status-changed",
-            callback: (status: Status) => void,
-            ctx?: unknown
-        ): EventRef;
+        on(name: "obsidian-git:status-changed", callback: (status: Status) => void, ctx?: unknown): EventRef;
 
         on(
             name: "obsidian-git:menu",
-            callback: (
-                menu: Menu,
-                path: string,
-                source: string,
-                leaf?: WorkspaceLeaf
-            ) => unknown,
+            callback: (menu: Menu, path: string, source: string, leaf?: WorkspaceLeaf) => unknown,
             ctx?: unknown
         ): EventRef;
         trigger(name: string, ...data: unknown[]): void;
@@ -400,12 +375,6 @@ declare module "obsidian" {
         trigger(name: "obsidian-git:loading-status"): void;
         trigger(name: "obsidian-git:head-change"): void;
         trigger(name: "obsidian-git:status-changed", status: Status): void;
-        trigger(
-            name: "obsidian-git:menu",
-            menu: Menu,
-            path: string,
-            source: string,
-            leaf?: WorkspaceLeaf
-        ): void;
+        trigger(name: "obsidian-git:menu", menu: Menu, path: string, source: string, leaf?: WorkspaceLeaf): void;
     }
 }

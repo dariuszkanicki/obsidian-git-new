@@ -9,22 +9,10 @@ export class LocalStorageSettings {
     }
 
     migrate(): void {
-        const keys = [
-            "password",
-            "hostname",
-            "conflict",
-            "lastAutoPull",
-            "lastAutoBackup",
-            "lastAutoPush",
-            "gitPath",
-            "pluginDisabled",
-        ];
+        const keys = ["password", "hostname", "conflict", "lastAutoPull", "lastAutoBackup", "lastAutoPush", "gitPath", "pluginDisabled"];
         for (const key of keys) {
             const old = localStorage.getItem(this.prefix + key);
-            if (
-                this.app.loadLocalStorage(this.prefix + key) == null &&
-                old != null
-            ) {
+            if (this.app.loadLocalStorage(this.prefix + key) == null && old != null) {
                 if (old != null) {
                     this.app.saveLocalStorage(this.prefix + key, old);
                     localStorage.removeItem(this.prefix + key);
@@ -98,42 +86,26 @@ export class LocalStorageSettings {
     }
 
     getPATHPaths(): string[] {
-        return (
-            this.app.loadLocalStorage(this.prefix + "PATHPaths")?.split(":") ??
-            []
-        );
+        return this.app.loadLocalStorage(this.prefix + "PATHPaths")?.split(":") ?? [];
     }
 
     setPATHPaths(value: string[]): void {
-        return this.app.saveLocalStorage(
-            this.prefix + "PATHPaths",
-            value.join(":")
-        );
+        return this.app.saveLocalStorage(this.prefix + "PATHPaths", value.join(":"));
     }
 
     getEnvVars(): string[] {
-        return JSON.parse(
-            this.app.loadLocalStorage(this.prefix + "envVars") ?? "[]"
-        ) as string[];
+        return JSON.parse(this.app.loadLocalStorage(this.prefix + "envVars") ?? "[]") as string[];
     }
 
     setEnvVars(value: string[]): void {
-        return this.app.saveLocalStorage(
-            this.prefix + "envVars",
-            JSON.stringify(value)
-        );
+        return this.app.saveLocalStorage(this.prefix + "envVars", JSON.stringify(value));
     }
 
     getPluginDisabled(): boolean {
-        return (
-            this.app.loadLocalStorage(this.prefix + "pluginDisabled") == "true"
-        );
+        return this.app.loadLocalStorage(this.prefix + "pluginDisabled") == "true";
     }
 
     setPluginDisabled(value: boolean): void {
-        return this.app.saveLocalStorage(
-            this.prefix + "pluginDisabled",
-            `${value}`
-        );
+        return this.app.saveLocalStorage(this.prefix + "pluginDisabled", `${value}`);
     }
 }

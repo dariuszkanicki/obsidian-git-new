@@ -7,13 +7,9 @@ import type { GitTimestamp } from "src/types";
  * Given the settings, it computes the background gutter color for the
  * oldest and newest commit.
  */
-export function previewColor(
-    which: "oldest" | "newest",
-    settings: LineAuthorSettings
-) {
+export function previewColor(which: "oldest" | "newest", settings: LineAuthorSettings) {
     return which === "oldest"
-        ? coloringBasedOnCommitAge(0 /* epoch time: 1970 */, false, settings)
-              .color
+        ? coloringBasedOnCommitAge(0 /* epoch time: 1970 */, false, settings).color
         : coloringBasedOnCommitAge(undefined, true, settings).color;
 }
 
@@ -41,18 +37,13 @@ export function coloringBasedOnCommitAge(
     const epochSecondsNow = Date.now() / 1000;
     const authoringEpochSeconds = commitAuthorEpochSeonds ?? 0;
 
-    const secondsSinceCommit = isZeroCommit
-        ? 0
-        : epochSecondsNow - authoringEpochSeconds;
+    const secondsSinceCommit = isZeroCommit ? 0 : epochSecondsNow - authoringEpochSeconds;
 
     const daysSinceCommit = secondsSinceCommit / 60 / 60 / 24;
 
     // 0 <= x <= 1, larger means older
     // use n-th-root to make recent changes more prnounced
-    const x = Math.pow(
-        Math.clamp(daysSinceCommit / maxAgeInDays, 0, 1),
-        1 / 2.3
-    );
+    const x = Math.pow(Math.clamp(daysSinceCommit / maxAgeInDays, 0, 1), 1 / 2.3);
 
     const dark = isDarkMode();
 
@@ -82,8 +73,5 @@ function isDarkMode() {
  * value in the line author settings. This is necessary for proper text coloring.
  */
 export function setTextColorCssBasedOnSetting(settings: LineAuthorSettings) {
-    document.body.style.setProperty(
-        "--obs-git-gutter-text",
-        settings.textColorCss
-    );
+    document.body.style.setProperty("--obs-git-gutter-text", settings.textColorCss);
 }

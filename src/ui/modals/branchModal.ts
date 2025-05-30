@@ -2,9 +2,7 @@ import { FuzzySuggestModal } from "obsidian";
 import type ObsidianGit from "src/main";
 
 export class BranchModal extends FuzzySuggestModal<string> {
-    resolve: (
-        value: string | undefined | PromiseLike<string | undefined>
-    ) => void;
+    resolve: (value: string | undefined | PromiseLike<string | undefined>) => void;
 
     constructor(
         plugin: ObsidianGit,

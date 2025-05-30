@@ -52,10 +52,7 @@ ${log.message}`}
             data-tooltip-position={side}
             onclick={() => (isCollapsed = !isCollapsed)}
         >
-            <div
-                class="tree-item-icon nav-folder-collapse-indicator collapse-icon"
-                class:is-collapsed={isCollapsed}
-            >
+            <div class="tree-item-icon nav-folder-collapse-indicator collapse-icon" class:is-collapsed={isCollapsed}>
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -66,8 +63,7 @@ ${log.message}`}
                     stroke-width="2"
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    class="svg-icon right-triangle"
-                    ><path d="M3 8L12 17L21 8" /></svg
+                    class="svg-icon right-triangle"><path d="M3 8L12 17L21 8" /></svg
                 >
             </div>
             <div>
@@ -83,9 +79,7 @@ ${log.message}`}
                 {/if}
                 {#if plugin.settings.dateInHistoryView}
                     <div class="git-date">
-                        {moment(log.date).format(
-                            plugin.settings.commitDateFormat
-                        )}
+                        {moment(log.date).format(plugin.settings.commitDateFormat)}
                     </div>
                 {/if}
 
@@ -95,17 +89,9 @@ ${log.message}`}
             </div>
         </div>
         {#if !isCollapsed}
-            <div
-                class="tree-item-children nav-folder-children"
-                transition:slide|local={{ duration: 150 }}
-            >
+            <div class="tree-item-children nav-folder-children" transition:slide|local={{ duration: 150 }}>
                 {#if showTree}
-                    <LogTreeComponent
-                        hierarchy={logsHierarchy}
-                        {plugin}
-                        {view}
-                        topLevel={true}
-                    />
+                    <LogTreeComponent hierarchy={logsHierarchy} {plugin} {view} topLevel={true} />
                 {:else}
                     {#each log.diff.files as file}
                         <LogFileComponent {view} diff={file} />

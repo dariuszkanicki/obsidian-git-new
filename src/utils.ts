@@ -15,10 +15,7 @@ export const worthWalking = (filepath: string, root?: string) => {
     }
 };
 
-export function getNewLeaf(
-    app: App,
-    event?: MouseEvent
-): WorkspaceLeaf | undefined {
+export function getNewLeaf(app: App, event?: MouseEvent): WorkspaceLeaf | undefined {
     let leaf: WorkspaceLeaf | undefined;
     if (event) {
         if (event.button === 0 || event.button === 1) {
@@ -31,13 +28,7 @@ export function getNewLeaf(
     return leaf;
 }
 
-export function mayTriggerFileMenu(
-    app: App,
-    event: MouseEvent,
-    filePath: string,
-    view: WorkspaceLeaf,
-    source: string
-) {
+export function mayTriggerFileMenu(app: App, event: MouseEvent, filePath: string, view: WorkspaceLeaf, source: string) {
     if (event.button == 2) {
         const file = app.vault.getAbstractFileByPath(filePath);
         if (file != null) {
@@ -46,13 +37,7 @@ export function mayTriggerFileMenu(
             fileMenu.showAtPosition({ x: event.pageX, y: event.pageY });
         } else {
             const fileMenu = new Menu();
-            app.workspace.trigger(
-                "obsidian-git:menu",
-                fileMenu,
-                filePath,
-                source,
-                view
-            );
+            app.workspace.trigger("obsidian-git:menu", fileMenu, filePath, source, view);
             fileMenu.showAtPosition({ x: event.pageX, y: event.pageY });
         }
     }
@@ -107,43 +92,27 @@ export function arrayProxyWithNewLength<T>(array: T[], length: number): T[] {
     });
 }
 
-export function resizeToLength(
-    original: string,
-    desiredLength: number,
-    fillChar: string
-): string {
+export function resizeToLength(original: string, desiredLength: number, fillChar: string): string {
     if (original.length <= desiredLength) {
-        const prefix = new Array(desiredLength - original.length)
-            .fill(fillChar)
-            .join("");
+        const prefix = new Array(desiredLength - original.length).fill(fillChar).join("");
         return prefix + original;
     } else {
         return original.substring(original.length - desiredLength);
     }
 }
 
-export function prefixOfLengthAsWhitespace(
-    toBeRenderedText: string,
-    whitespacePrefixLength: number
-): string {
+export function prefixOfLengthAsWhitespace(toBeRenderedText: string, whitespacePrefixLength: number): string {
     if (whitespacePrefixLength <= 0) return toBeRenderedText;
 
-    const whitespacePrefix = new Array(whitespacePrefixLength)
-        .fill(" ")
-        .join("");
-    const originalSuffix = toBeRenderedText.substring(
-        whitespacePrefixLength,
-        toBeRenderedText.length
-    );
+    const whitespacePrefix = new Array(whitespacePrefixLength).fill(" ").join("");
+    const originalSuffix = toBeRenderedText.substring(whitespacePrefixLength, toBeRenderedText.length);
     return whitespacePrefix + originalSuffix;
 }
 
 export function between(l: number, x: number, r: number) {
     return l <= x && x <= r;
 }
-export function splitRemoteBranch(
-    remoteBranch: string
-): readonly [string, string | undefined] {
+export function splitRemoteBranch(remoteBranch: string): readonly [string, string | undefined] {
     const [remote, ...branch] = remoteBranch.split("/");
     return [remote, branch.length === 0 ? undefined : branch.join("/")];
 }
@@ -176,10 +145,7 @@ export function fileIsBinary(path: string): boolean {
 }
 
 export function formatRemoteUrl(url: string): string {
-    if (
-        url.startsWith("https://github.com/") ||
-        url.startsWith("https://gitlab.com/")
-    ) {
+    if (url.startsWith("https://github.com/") || url.startsWith("https://gitlab.com/")) {
         if (!url.endsWith(".git")) {
             url = url + ".git";
         }
@@ -187,10 +153,7 @@ export function formatRemoteUrl(url: string): string {
     return url;
 }
 
-export function fileOpenableInObsidian(
-    relativeVaultPath: string,
-    app: App
-): boolean {
+export function fileOpenableInObsidian(relativeVaultPath: string, app: App): boolean {
     const file = app.vault.getAbstractFileByPath(relativeVaultPath);
     if (!(file instanceof TFile)) {
         return false;
@@ -207,13 +170,7 @@ export function fileOpenableInObsidian(
     }
 }
 
-export function convertPathToAbsoluteGitignoreRule({
-    isFolder,
-    gitRelativePath,
-}: {
-    isFolder?: boolean;
-    gitRelativePath: string;
-}): string {
+export function convertPathToAbsoluteGitignoreRule({ isFolder, gitRelativePath }: { isFolder?: boolean; gitRelativePath: string }): string {
     // Add a leading slash to set the rule as absolute from root, so it only excludes that exact path
     let composedPath = "/";
 

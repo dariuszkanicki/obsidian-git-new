@@ -31,14 +31,10 @@ export function addCommmands(plugin: ObsidianGit) {
         id: "open-git-view",
         name: "Open source control view",
         callback: async () => {
-            const leafs = app.workspace.getLeavesOfType(
-                SOURCE_CONTROL_VIEW_CONFIG.type
-            );
+            const leafs = app.workspace.getLeavesOfType(SOURCE_CONTROL_VIEW_CONFIG.type);
             let leaf: WorkspaceLeaf;
             if (leafs.length === 0) {
-                leaf =
-                    app.workspace.getRightLeaf(false) ??
-                    app.workspace.getLeaf();
+                leaf = app.workspace.getRightLeaf(false) ?? app.workspace.getLeaf();
                 await leaf.setViewState({
                     type: SOURCE_CONTROL_VIEW_CONFIG.type,
                 });
@@ -56,14 +52,10 @@ export function addCommmands(plugin: ObsidianGit) {
         id: "open-history-view",
         name: "Open history view",
         callback: async () => {
-            const leafs = app.workspace.getLeavesOfType(
-                HISTORY_VIEW_CONFIG.type
-            );
+            const leafs = app.workspace.getLeavesOfType(HISTORY_VIEW_CONFIG.type);
             let leaf: WorkspaceLeaf;
             if (leafs.length === 0) {
-                leaf =
-                    app.workspace.getRightLeaf(false) ??
-                    app.workspace.getLeaf();
+                leaf = app.workspace.getRightLeaf(false) ?? app.workspace.getLeaf();
                 await leaf.setViewState({
                     type: HISTORY_VIEW_CONFIG.type,
                 });
@@ -86,10 +78,7 @@ export function addCommmands(plugin: ObsidianGit) {
             if (checking) {
                 return file !== null;
             } else {
-                const filePath = plugin.gitManager.getRelativeRepoPath(
-                    file!.path,
-                    true
-                );
+                const filePath = plugin.gitManager.getRelativeRepoPath(file!.path, true);
                 plugin.tools.openDiff({
                     aFile: filePath,
                     aRef: "",
@@ -117,8 +106,7 @@ export function addCommmands(plugin: ObsidianGit) {
     plugin.addCommand({
         id: "pull",
         name: "Pull",
-        callback: () =>
-            plugin.promiseQueue.addTask(() => plugin.pullChangesFromRemote()),
+        callback: () => plugin.promiseQueue.addTask(() => plugin.pullChangesFromRemote()),
     });
 
     plugin.addCommand({
@@ -130,8 +118,7 @@ export function addCommmands(plugin: ObsidianGit) {
     plugin.addCommand({
         id: "switch-to-remote-branch",
         name: "Switch to remote branch",
-        callback: () =>
-            plugin.promiseQueue.addTask(() => plugin.switchRemoteBranch()),
+        callback: () => plugin.promiseQueue.addTask(() => plugin.switchRemoteBranch()),
     });
 
     plugin.addCommand({
@@ -142,9 +129,7 @@ export function addCommmands(plugin: ObsidianGit) {
             if (checking) {
                 return file !== null;
             } else {
-                plugin
-                    .addFileToGitignore(file!.path, file instanceof TFolder)
-                    .catch((e) => plugin.displayError(e));
+                plugin.addFileToGitignore(file!.path, file instanceof TFolder).catch((e) => plugin.displayError(e));
             }
         },
     });
@@ -152,10 +137,7 @@ export function addCommmands(plugin: ObsidianGit) {
     plugin.addCommand({
         id: "push",
         name: "Commit-and-sync",
-        callback: () =>
-            plugin.promiseQueue.addTask(() =>
-                plugin.commitAndSync({ fromAutoBackup: false })
-            ),
+        callback: () => plugin.promiseQueue.addTask(() => plugin.commitAndSync({ fromAutoBackup: false })),
     });
 
     plugin.addCommand({
@@ -183,10 +165,7 @@ export function addCommmands(plugin: ObsidianGit) {
     plugin.addCommand({
         id: "commit",
         name: "Commit all changes",
-        callback: () =>
-            plugin.promiseQueue.addTask(() =>
-                plugin.commit({ fromAuto: false })
-            ),
+        callback: () => plugin.promiseQueue.addTask(() => plugin.commit({ fromAuto: false })),
     });
 
     plugin.addCommand({
@@ -278,47 +257,36 @@ export function addCommmands(plugin: ObsidianGit) {
     plugin.addCommand({
         id: "edit-remotes",
         name: "Edit remotes",
-        callback: () =>
-            plugin.editRemotes().catch((e) => plugin.displayError(e)),
+        callback: () => plugin.editRemotes().catch((e) => plugin.displayError(e)),
     });
 
     plugin.addCommand({
         id: "remove-remote",
         name: "Remove remote",
-        callback: () =>
-            plugin.removeRemote().catch((e) => plugin.displayError(e)),
+        callback: () => plugin.removeRemote().catch((e) => plugin.displayError(e)),
     });
 
     plugin.addCommand({
         id: "set-upstream-branch",
         name: "Set upstream branch",
-        callback: () =>
-            plugin.setUpstreamBranch().catch((e) => plugin.displayError(e)),
+        callback: () => plugin.setUpstreamBranch().catch((e) => plugin.displayError(e)),
     });
 
     plugin.addCommand({
         id: "delete-repo",
         name: "CAUTION: Delete repository",
         callback: async () => {
-            const repoExists = await app.vault.adapter.exists(
-                `${plugin.settings.basePath}/.git`
-            );
+            const repoExists = await app.vault.adapter.exists(`${plugin.settings.basePath}/.git`);
             if (repoExists) {
                 const modal = new GeneralModal(plugin, {
                     options: ["NO", "YES"],
-                    placeholder:
-                        "Do you really want to delete the repository (.git directory)? plugin action cannot be undone.",
+                    placeholder: "Do you really want to delete the repository (.git directory)? plugin action cannot be undone.",
                     onlySelection: true,
                 });
                 const shouldDelete = (await modal.openAndGetResult()) === "YES";
                 if (shouldDelete) {
-                    await app.vault.adapter.rmdir(
-                        `${plugin.settings.basePath}/.git`,
-                        true
-                    );
-                    new Notice(
-                        "Successfully deleted repository. Reloading plugin..."
-                    );
+                    await app.vault.adapter.rmdir(`${plugin.settings.basePath}/.git`, true);
+                    new Notice("Successfully deleted repository. Reloading plugin...");
                     plugin.unloadPlugin();
                     await plugin.init({ fromReload: true });
                 }
@@ -331,15 +299,13 @@ export function addCommmands(plugin: ObsidianGit) {
     plugin.addCommand({
         id: "init-repo",
         name: "Initialize a new repo",
-        callback: () =>
-            plugin.createNewRepo().catch((e) => plugin.displayError(e)),
+        callback: () => plugin.createNewRepo().catch((e) => plugin.displayError(e)),
     });
 
     plugin.addCommand({
         id: "clone-repo",
         name: "Clone an existing remote repo",
-        callback: () =>
-            plugin.cloneNewRepo().catch((e) => plugin.displayError(e)),
+        callback: () => plugin.cloneNewRepo().catch((e) => plugin.displayError(e)),
     });
 
     plugin.addCommand({
@@ -393,8 +359,7 @@ export function addCommmands(plugin: ObsidianGit) {
             if (!(await plugin.isAllInitialized())) return false;
             const modal = new GeneralModal(plugin, {
                 options: ["NO", "YES"],
-                placeholder:
-                    "Do you want to discard all changes to tracked files? plugin action cannot be undone.",
+                placeholder: "Do you want to discard all changes to tracked files? plugin action cannot be undone.",
                 onlySelection: true,
             });
             const shouldDiscardAll = (await modal.openAndGetResult()) === "YES";
@@ -413,9 +378,7 @@ export function addCommmands(plugin: ObsidianGit) {
                 // only available on desktop
                 return gitManager instanceof SimpleGit;
             } else {
-                plugin.tools
-                    .runRawCommand()
-                    .catch((e) => plugin.displayError(e));
+                plugin.tools.runRawCommand().catch((e) => plugin.displayError(e));
             }
         },
     });
@@ -423,9 +386,6 @@ export function addCommmands(plugin: ObsidianGit) {
     plugin.addCommand({
         id: "toggle-line-author-info",
         name: "Toggle line author information",
-        callback: () =>
-            plugin.settingsTab?.configureLineAuthorShowStatus(
-                !plugin.settings.lineAuthor.show
-            ),
+        callback: () => plugin.settingsTab?.configureLineAuthorShowStatus(!plugin.settings.lineAuthor.show),
     });
 }

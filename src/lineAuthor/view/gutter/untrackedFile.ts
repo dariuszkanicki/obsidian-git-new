@@ -6,10 +6,7 @@ import type { Blame } from "src/types";
 /**
  * The gutter to show on untracked files.
  */
-export function newUntrackedFileGutter(
-    key: string,
-    settings: LineAuthorSettings
-) {
+export function newUntrackedFileGutter(key: string, settings: LineAuthorSettings) {
     const dummyLineAuthoring = <Blame>{
         hashPerLine: [undefined!, "000000"],
         commits: new Map([["000000", zeroCommit]]),

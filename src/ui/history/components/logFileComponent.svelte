@@ -1,13 +1,7 @@
 <script lang="ts">
     import { setIcon, TFile } from "obsidian";
     import type { DiffFile } from "src/types";
-    import {
-        fileIsBinary,
-        fileOpenableInObsidian,
-        getDisplayPath,
-        getNewLeaf,
-        mayTriggerFileMenu,
-    } from "src/utils";
+    import { fileIsBinary, fileOpenableInObsidian, getDisplayPath, getNewLeaf, mayTriggerFileMenu } from "src/utils";
     import type HistoryView from "../historyView";
 
     interface Props {
@@ -65,14 +59,7 @@
     onclick={mainClick}
     onauxclick={(event) => {
         event.stopPropagation();
-        if (event.button == 2)
-            mayTriggerFileMenu(
-                view.app,
-                event,
-                diff.vaultPath,
-                view.leaf,
-                "git-history"
-            );
+        if (event.button == 2) mayTriggerFileMenu(view.app, event, diff.vaultPath, view.leaf, "git-history");
         else mainClick(event);
     }}
     class="tree-item nav-file"

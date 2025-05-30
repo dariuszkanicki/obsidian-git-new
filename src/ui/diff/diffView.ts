@@ -20,12 +20,9 @@ export default class DiffView extends ItemView {
         super(leaf);
         this.parser = new DOMParser();
         this.navigation = true;
-        this.gitRefreshRef = this.app.workspace.on(
-            "obsidian-git:status-changed",
-            () => {
-                this.refresh().catch(console.error);
-            }
-        );
+        this.gitRefreshRef = this.app.workspace.on("obsidian-git:status-changed", () => {
+            this.refresh().catch(console.error);
+        });
     }
 
     getViewType(): string {
@@ -76,47 +73,26 @@ export default class DiffView extends ItemView {
         if (this.state?.bFile && !this.gettingDiff && this.plugin.gitManager) {
             this.gettingDiff = true;
             try {
-                let diff = await this.plugin.gitManager.getDiffString(
-                    this.state.bFile,
-                    this.state.aRef == "HEAD",
-                    this.state.bRef
-                );
+                let diff = await this.plugin.gitManager.getDiffString(this.state.bFile, this.state.aRef == "HEAD", this.state.bRef);
                 this.contentEl.empty();
 
-                const vaultPath = this.plugin.gitManager.getRelativeVaultPath(
-                    this.state.bFile
-                );
+                const vaultPath = this.plugin.gitManager.getRelativeVaultPath(this.state.bFile);
                 if (!diff) {
-                    if (
-                        this.plugin.gitManager instanceof SimpleGit &&
-                        (await this.plugin.gitManager.isTracked(
-                            this.state.bFile
-                        ))
-                    ) {
+                    if (this.plugin.gitManager instanceof SimpleGit && (await this.plugin.gitManager.isTracked(this.state.bFile))) {
                         // File is tracked but no changes
-                        diff = [
-                            `--- ${this.state.aFile}`,
-                            `+++ ${this.state.bFile}`,
-                            "",
-                        ].join("\n");
+                        diff = [`--- ${this.state.aFile}`, `+++ ${this.state.bFile}`, ""].join("\n");
                     } else if (await this.app.vault.adapter.exists(vaultPath)) {
-                        const content =
-                            await this.app.vault.adapter.read(vaultPath);
+                        const content = await this.app.vault.adapter.read(vaultPath);
                         const header = `--- /dev/null
 +++ ${this.state.bFile}
 @@ -0,0 +1,${content.split("\n").length} @@`;
 
-                        diff = [
-                            ...header.split("\n"),
-                            ...content.split("\n").map((line) => `+${line}`),
-                        ].join("\n");
+                        diff = [...header.split("\n"), ...content.split("\n").map((line) => `+${line}`)].join("\n");
                     }
                 }
 
                 if (diff) {
-                    const diffEl = this.parser
-                        .parseFromString(html(diff), "text/html")
-                        .querySelector(".d2h-file-diff");
+                    const diffEl = this.parser.parseFromString(html(diff), "text/html").querySelector(".d2h-file-diff");
                     this.contentEl.append(diffEl!);
                 } else {
                     const div = this.contentEl.createDiv({

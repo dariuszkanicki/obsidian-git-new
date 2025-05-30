@@ -21,22 +21,14 @@
         topLevel?: boolean;
     }
 
-    let {
-        hierarchy,
-        plugin,
-        view,
-        fileType,
-        topLevel = false,
-    }: Props = $props();
+    let { hierarchy, plugin, view, fileType, topLevel = false }: Props = $props();
     const closed: Record<string, boolean> = $state({});
 
     for (const entity of hierarchy.children) {
         closed[entity.title] = (entity.children?.length ?? 0) > 100;
     }
     /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access */
-    let side = $derived(
-        (view.leaf.getRoot() as any).side == "left" ? "right" : "left"
-    );
+    let side = $derived((view.leaf.getRoot() as any).side == "left" ? "right" : "left");
 
     function stage(event: MouseEvent, path: string) {
         event.stopPropagation();
@@ -86,17 +78,9 @@
         {#if entity.data}
             <div>
                 {#if fileType == FileType.staged}
-                    <StagedFileComponent
-                        change={entity.data}
-                        manager={plugin.gitManager}
-                        {view}
-                    />
+                    <StagedFileComponent change={entity.data} manager={plugin.gitManager} {view} />
                 {:else if fileType == FileType.changed}
-                    <FileComponent
-                        change={entity.data}
-                        manager={plugin.gitManager}
-                        {view}
-                    />
+                    <FileComponent change={entity.data} manager={plugin.gitManager} {view} />
                 {:else if fileType == FileType.pulled}
                     <PulledFileComponent change={entity.data} {view} />
                 {/if}
@@ -104,30 +88,13 @@
         {:else}
             <div
                 onclick={() => fold(entity)}
-                onauxclick={(event) =>
-                    mayTriggerFileMenu(
-                        view.app,
-                        event,
-                        entity.vaultPath,
-                        view.leaf,
-                        "git-source-control"
-                    )}
+                onauxclick={(event) => mayTriggerFileMenu(view.app, event, entity.vaultPath, view.leaf, "git-source-control")}
                 class="tree-item nav-folder"
                 class:is-collapsed={closed[entity.title]}
             >
-                <div
-                    class="tree-item-self is-clickable nav-folder-title"
-                    data-tooltip-position={side}
-                    aria-label={entity.vaultPath}
-                >
-                    <div
-                        data-icon="folder"
-                        style="padding-right: 5px; display: flex; "
-                    ></div>
-                    <div
-                        class="tree-item-icon nav-folder-collapse-indicator collapse-icon"
-                        class:is-collapsed={closed[entity.title]}
-                    >
+                <div class="tree-item-self is-clickable nav-folder-title" data-tooltip-position={side} aria-label={entity.vaultPath}>
+                    <div data-icon="folder" style="padding-right: 5px; display: flex; "></div>
+                    <div class="tree-item-icon nav-folder-collapse-indicator collapse-icon" class:is-collapsed={closed[entity.title]}>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
@@ -138,8 +105,7 @@
                             stroke-width="2"
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            class="svg-icon right-triangle"
-                            ><path d="M3 8L12 17L21 8" /></svg
+                            class="svg-icon right-triangle"><path d="M3 8L12 17L21 8" /></svg
                         >
                     </div>
                     <div class="tree-item-inner nav-folder-title-content">
@@ -151,8 +117,7 @@
                                 <div
                                     data-icon="minus"
                                     aria-label="Unstage"
-                                    onclick={(event) =>
-                                        unstage(event, entity.path)}
+                                    onclick={(event) => unstage(event, entity.path)}
                                     class="clickable-icon"
                                 >
                                     <svg
@@ -164,13 +129,7 @@
                                         stroke-width="2"
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
-                                        class="svg-icon lucide-minus"
-                                        ><line
-                                            x1="4"
-                                            y1="9"
-                                            x2="14"
-                                            y2="9"
-                                        /></svg
+                                        class="svg-icon lucide-minus"><line x1="4" y1="9" x2="14" y2="9" /></svg
                                     >
                                 </div>
                             {:else}
@@ -191,16 +150,13 @@
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
                                         class="svg-icon lucide-undo"
-                                        ><path d="M3 7v6h6" /><path
-                                            d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"
-                                        /></svg
+                                        ><path d="M3 7v6h6" /><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" /></svg
                                     >
                                 </div>
                                 <div
                                     data-icon="plus"
                                     aria-label="Stage"
-                                    onclick={(event) =>
-                                        stage(event, entity.path)}
+                                    onclick={(event) => stage(event, entity.path)}
                                     class="clickable-icon"
                                 >
                                     <svg
@@ -213,17 +169,7 @@
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
                                         class="svg-icon lucide-plus"
-                                        ><line
-                                            x1="9"
-                                            y1="4"
-                                            x2="9"
-                                            y2="14"
-                                        /><line
-                                            x1="4"
-                                            y1="9"
-                                            x2="14"
-                                            y2="9"
-                                        /></svg
+                                        ><line x1="9" y1="4" x2="9" y2="14" /><line x1="4" y1="9" x2="14" y2="9" /></svg
                                     >
                                 </div>
                             {/if}
@@ -233,16 +179,8 @@
                 </div>
 
                 {#if !closed[entity.title]}
-                    <div
-                        class="tree-item-children nav-folder-children"
-                        transition:slide|local={{ duration: 150 }}
-                    >
-                        <TreeComponent
-                            hierarchy={entity as StatusRootTreeItem}
-                            {plugin}
-                            {view}
-                            {fileType}
-                        />
+                    <div class="tree-item-children nav-folder-children" transition:slide|local={{ duration: 150 }}>
+                        <TreeComponent hierarchy={entity as StatusRootTreeItem} {plugin} {view} {fileType} />
                     </div>
                 {/if}
             </div>

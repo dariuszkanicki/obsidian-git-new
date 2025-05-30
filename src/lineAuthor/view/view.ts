@@ -2,27 +2,11 @@ import type { Extension, Range, Text } from "@codemirror/state";
 import { RangeSet } from "@codemirror/state";
 import type { EditorView, GutterMarker } from "@codemirror/view";
 import { gutter } from "@codemirror/view";
-import type {
-    LineAuthoringWithChanges,
-    LineAuthorSettings,
-} from "src/lineAuthor/model";
-import {
-    laStateDigest,
-    latestSettings,
-    lineAuthorState,
-} from "src/lineAuthor/model";
-import {
-    getLongestRenderedGutter,
-    gutterMarkersRangeSet,
-} from "src/lineAuthor/view/cache";
-import {
-    lineAuthoringGutterMarker,
-    TextGutter,
-} from "src/lineAuthor/view/gutter/gutter";
-import {
-    initialLineAuthoringGutter,
-    initialSpacingGutter,
-} from "src/lineAuthor/view/gutter/initial";
+import type { LineAuthoringWithChanges, LineAuthorSettings } from "src/lineAuthor/model";
+import { laStateDigest, latestSettings, lineAuthorState } from "src/lineAuthor/model";
+import { getLongestRenderedGutter, gutterMarkersRangeSet } from "src/lineAuthor/view/cache";
+import { lineAuthoringGutterMarker, TextGutter } from "src/lineAuthor/view/gutter/gutter";
+import { initialLineAuthoringGutter, initialSpacingGutter } from "src/lineAuthor/view/gutter/initial";
 import { newUntrackedFileGutter } from "src/lineAuthor/view/gutter/untrackedFile";
 import { between } from "src/utils";
 
@@ -47,12 +31,8 @@ export const lineAuthorGutter: Extension = gutter({
         return lineAuthoringGutterMarkersRangeSet(view, lineAuthoring);
     },
     lineMarkerChange(update) {
-        const newLineAuthoringId = laStateDigest(
-            update.state.field(lineAuthorState)
-        );
-        const oldLineAuthoringId = laStateDigest(
-            update.startState.field(lineAuthorState)
-        );
+        const newLineAuthoringId = laStateDigest(update.state.field(lineAuthorState));
+        const oldLineAuthoringId = laStateDigest(update.startState.field(lineAuthorState));
         return oldLineAuthoringId !== newLineAuthoringId;
     },
     renderEmptyElements: true,
@@ -72,10 +52,7 @@ export const lineAuthorGutter: Extension = gutter({
  * The computation result is cached for better performance via a SHA-256 `cacheKey`.
  * The actual computation happens in {@link computeLineAuthoringGutterMarkersRangeSet}.
  */
-function lineAuthoringGutterMarkersRangeSet(
-    view: EditorView,
-    optLA?: LineAuthoringWithChanges
-): RangeSet<GutterMarker> {
+function lineAuthoringGutterMarkersRangeSet(view: EditorView, optLA?: LineAuthoringWithChanges): RangeSet<GutterMarker> {
     const digest = laStateDigest(optLA);
 
     const doc = view.state.doc;
@@ -102,12 +79,7 @@ function lineAuthoringGutterMarkersRangeSet(
     if (cached) return cached;
 
     // This is called infrequently enough to put the computation there.
-    const { result, allowCache } = computeLineAuthoringGutterMarkersRangeSet(
-        doc,
-        lineBlockEndPos,
-        laSettings,
-        optLA
-    );
+    const { result, allowCache } = computeLineAuthoringGutterMarkersRangeSet(doc, lineBlockEndPos, laSettings, optLA);
     if (allowCache) gutterMarkersRangeSet.set(cacheKey, result);
     return result;
 }
@@ -131,8 +103,7 @@ function computeLineAuthoringGutterMarkersRangeSet(
 
     const emptyDoc = doc.length === 0;
 
-    const lastLineIsEmpty =
-        doc.iterLines(docLastLine, docLastLine + 1).next().value === "";
+    const lastLineIsEmpty = doc.iterLines(docLastLine, docLastLine + 1).next().value === "";
 
     for (let startLine = 1; startLine <= docLastLine; startLine++) {
         const [from, to] = blocksPerLine.get(startLine)!;
@@ -176,17 +147,7 @@ function computeLineAuthoringGutterMarkersRangeSet(
             laEndLine !== undefined &&
             between(1, laEndLine, lastAuthorLine)
         ) {
-            add(
-                from,
-                to,
-                lineAuthoringGutterMarker(
-                    la,
-                    laStartLine,
-                    laEndLine,
-                    key,
-                    settings
-                )
-            );
+            add(from, to, lineAuthoringGutterMarker(la, laStartLine, laEndLine, key, settings));
             continue;
         }
 
@@ -202,33 +163,16 @@ function computeLineAuthoringGutterMarkersRangeSet(
         const start = Math.clamp(laStartLine ?? startLine, 1, lastAuthorLine);
         const end = Math.clamp(laEndLine ?? endLine, 1, lastAuthorLine);
 
-        add(
-            from,
-            to,
-            lineAuthoringGutterMarker(
-                la,
-                start,
-                end,
-                key + "computing",
-                settings,
-                "waiting-for-result"
-            )
-        );
+        add(from, to, lineAuthoringGutterMarker(la, start, end, key + "computing", settings, "waiting-for-result"));
     }
 
     return { result: RangeSet.of(ranges, /* sort = */ true), allowCache };
 }
 
 // todo. explain.
-function computeLineMappingForUnsavedChanges(
-    docLastLine: number,
-    optLA: LineAuthoringWithChanges | undefined
-): (number | undefined)[] {
+function computeLineMappingForUnsavedChanges(docLastLine: number, optLA: LineAuthoringWithChanges | undefined): (number | undefined)[] {
     if (!optLA?.lineOffsetsFromUnsavedChanges) {
-        return Array.from(
-            new Array<number | undefined>(docLastLine + 1),
-            (ln) => ln
-        );
+        return Array.from(new Array<number | undefined>(docLastLine + 1), (ln) => ln);
     }
 
     const lineFrom: (number | undefined)[] = [undefined];
@@ -239,10 +183,7 @@ function computeLineMappingForUnsavedChanges(
         cumulativeLineOffset += unsavedChanges ?? 0; // compute cumulative sum of line offsets
         // if no unsaved changes are there for the current line, then use
         // the cumulative offset, otherwise return undefined - which will be rendered as 'computing'
-        lineFrom[ln] =
-            unsavedChanges === undefined
-                ? ln - cumulativeLineOffset
-                : undefined;
+        lineFrom[ln] = unsavedChanges === undefined ? ln - cumulativeLineOffset : undefined;
     }
 
     return lineFrom;
@@ -265,11 +206,8 @@ function computeLineMappingForUnsavedChanges(
  *
  * TODO: Remove this workaround, when this is fixed within Obsidian itself.
  */
-function temporaryWorkaroundGutterSpacingForRenderedLineAuthoring(
-    view: EditorView
-) {
-    const guttersContainers =
-        view.dom.querySelectorAll<HTMLElement>(".cm-gutters");
+function temporaryWorkaroundGutterSpacingForRenderedLineAuthoring(view: EditorView) {
+    const guttersContainers = view.dom.querySelectorAll<HTMLElement>(".cm-gutters");
     guttersContainers.forEach((cont) => {
         if (!cont?.style) return;
         if (!cont.style.marginLeft) {

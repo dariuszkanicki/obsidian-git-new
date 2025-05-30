@@ -25,9 +25,7 @@ export class LineAuthoringSubscriber {
 
     public notifyLineAuthoring(id: LineAuthoringId, la: LineAuthoring) {
         if (this.view === undefined) {
-            console.warn(
-                `Git: View is not defined for editor cache key. Unforeseen situation. id: ${id}`
-            );
+            console.warn(`Git: View is not defined for editor cache key. Unforeseen situation. id: ${id}`);
             return;
         }
 
@@ -39,8 +37,7 @@ export class LineAuthoringSubscriber {
 
     public updateToNewState(state: EditorState) {
         // if filepath has changed, then re-subcribe.
-        const filepathChanged =
-            this.lastSeenPath && this.filepath != this.lastSeenPath;
+        const filepathChanged = this.lastSeenPath && this.filepath != this.lastSeenPath;
         this.state = state;
 
         if (filepathChanged) {
@@ -63,18 +60,12 @@ export class LineAuthoringSubscriber {
     private subscribeMe() {
         if (this.filepath === undefined) return; // happens on the very first editor after start.
 
-        eventsPerFilePathSingleton.ifFilepathDefinedTransformSubscribers(
-            this.filepath,
-            (subs) => subs.add(this)
-        );
+        eventsPerFilePathSingleton.ifFilepathDefinedTransformSubscribers(this.filepath, (subs) => subs.add(this));
         this.lastSeenPath = this.filepath;
     }
 
     private unsubscribeMe(oldFilepath: string) {
-        eventsPerFilePathSingleton.ifFilepathDefinedTransformSubscribers(
-            oldFilepath,
-            (subs) => subs.delete(this)
-        );
+        eventsPerFilePathSingleton.ifFilepathDefinedTransformSubscribers(oldFilepath, (subs) => subs.delete(this));
     }
 
     private get filepath(): string | undefined {
@@ -91,9 +82,8 @@ export type LineAuthoringSubscribers = Set<LineAuthoringSubscriber>;
 /**
  * The Codemirror {@link Extension} used to make each editor subscribe itself to this pub-sub.
  */
-export const subscribeNewEditor: StateField<LineAuthoringSubscriber> =
-    StateField.define<LineAuthoringSubscriber>({
-        create: (state) => new LineAuthoringSubscriber(state),
-        update: (v, transaction) => v.updateToNewState(transaction.state),
-        compare: (a, b) => a === b,
-    });
+export const subscribeNewEditor: StateField<LineAuthoringSubscriber> = StateField.define<LineAuthoringSubscriber>({
+    create: (state) => new LineAuthoringSubscriber(state),
+    update: (v, transaction) => v.updateToNewState(transaction.state),
+    compare: (a, b) => a === b,
+});

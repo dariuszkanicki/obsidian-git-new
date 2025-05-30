@@ -47,8 +47,7 @@ export class StatusBar {
             this.statusBarEl.setText(this.currentMessage.message);
             this.lastMessageTimestamp = Date.now();
         } else if (this.currentMessage) {
-            const messageAge =
-                Date.now() - (this.lastMessageTimestamp as number);
+            const messageAge = Date.now() - (this.lastMessageTimestamp as number);
             if (messageAge >= this.currentMessage.timeout) {
                 this.currentMessage = null;
                 this.lastMessageTimestamp = null;
@@ -60,10 +59,7 @@ export class StatusBar {
 
     private displayState() {
         //Messages have to be removed before the state is set
-        if (
-            this.statusBarEl.getText().length > 3 ||
-            !this.statusBarEl.hasChildNodes()
-        ) {
+        if (this.statusBarEl.getText().length > 3 || !this.statusBarEl.hasChildNodes()) {
             this.statusBarEl.empty();
 
             this.conflictEl = this.statusBarEl.createDiv();
@@ -80,8 +76,7 @@ export class StatusBar {
 
         if (this.plugin.localStorage.getConflict()) {
             setIcon(this.conflictEl, "alert-circle");
-            this.conflictEl.ariaLabel =
-                "You have merge conflicts. Resolve them and commit afterwards.";
+            this.conflictEl.ariaLabel = "You have merge conflicts. Resolve them and commit afterwards.";
             this.conflictEl.style.marginRight = "5px";
             this.conflictEl.addClass(this.base + "conflict");
         } else {
@@ -131,17 +126,13 @@ export class StatusBar {
         const offlineMode = this.plugin.state.offlineMode;
         if (timestamp) {
             const fromNow = moment(timestamp).fromNow();
-            this.statusBarEl.ariaLabel = `${
-                offlineMode ? "Offline: " : ""
-            }Last Commit: ${fromNow}`;
+            this.statusBarEl.ariaLabel = `${offlineMode ? "Offline: " : ""}Last Commit: ${fromNow}`;
 
             if (this.unPushedCommits ?? 0 > 0) {
                 this.statusBarEl.ariaLabel += `\n(${this.unPushedCommits} unpushed commits)`;
             }
         } else {
-            this.statusBarEl.ariaLabel = offlineMode
-                ? "Git is offline"
-                : "Git is ready";
+            this.statusBarEl.ariaLabel = offlineMode ? "Git is offline" : "Git is ready";
         }
 
         if (offlineMode) {
@@ -149,22 +140,15 @@ export class StatusBar {
         } else {
             setIcon(this.iconEl, "check");
         }
-        if (
-            this.plugin.settings.changedFilesInStatusBar &&
-            this.plugin.cachedStatus
-        ) {
-            this.textEl.setText(
-                this.plugin.cachedStatus.changed.length.toString()
-            );
+        if (this.plugin.settings.changedFilesInStatusBar && this.plugin.cachedStatus) {
+            this.textEl.setText(this.plugin.cachedStatus.changed.length.toString());
         }
         this.statusBarEl.addClass(this.base + "idle");
     }
 
     private async refreshCommitTimestamp() {
-        this.lastCommitTimestamp =
-            await this.plugin.gitManager.getLastCommitTime();
-        this.unPushedCommits =
-            await this.plugin.gitManager.getUnpushedCommits();
+        this.lastCommitTimestamp = await this.plugin.gitManager.getLastCommitTime();
+        this.unPushedCommits = await this.plugin.gitManager.getUnpushedCommits();
     }
 
     public remove() {

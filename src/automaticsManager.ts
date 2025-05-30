@@ -20,9 +20,7 @@ export default class AutomaticsManager {
 
     private loadLastAuto(): { backup: Date; pull: Date; push: Date } {
         return {
-            backup: new Date(
-                this.plugin.localStorage.getLastAutoBackup() ?? ""
-            ),
+            backup: new Date(this.plugin.localStorage.getLastAutoBackup() ?? ""),
             pull: new Date(this.plugin.localStorage.getLastAutoPull() ?? ""),
             push: new Date(this.plugin.localStorage.getLastAutoPush() ?? ""),
         };
@@ -32,21 +30,12 @@ export default class AutomaticsManager {
         await this.setUpAutoCommitAndSync();
         const lastAutos = this.loadLastAuto();
 
-        if (
-            this.plugin.settings.differentIntervalCommitAndPush &&
-            this.plugin.settings.autoPushInterval > 0
-        ) {
-            const diff = this.diff(
-                this.plugin.settings.autoPushInterval,
-                lastAutos.push
-            );
+        if (this.plugin.settings.differentIntervalCommitAndPush && this.plugin.settings.autoPushInterval > 0) {
+            const diff = this.diff(this.plugin.settings.autoPushInterval, lastAutos.push);
             this.startAutoPush(diff);
         }
         if (this.plugin.settings.autoPullInterval > 0) {
-            const diff = this.diff(
-                this.plugin.settings.autoPullInterval,
-                lastAutos.pull
-            );
+            const diff = this.diff(this.plugin.settings.autoPullInterval, lastAutos.pull);
             this.startAutoPull(diff);
         }
     }
@@ -67,17 +56,12 @@ export default class AutomaticsManager {
         if (type.contains("commit")) {
             this.clearAutoCommitAndSync();
             if (this.plugin.settings.autoSaveInterval > 0) {
-                this.startAutoCommitAndSync(
-                    this.plugin.settings.autoSaveInterval
-                );
+                this.startAutoCommitAndSync(this.plugin.settings.autoSaveInterval);
             }
         }
         if (type.contains("push")) {
             this.clearAutoPush();
-            if (
-                this.plugin.settings.differentIntervalCommitAndPush &&
-                this.plugin.settings.autoPushInterval > 0
-            ) {
+            if (this.plugin.settings.differentIntervalCommitAndPush && this.plugin.settings.autoPushInterval > 0) {
                 this.startAutoPush(this.plugin.settings.autoPushInterval);
             }
         }
@@ -98,8 +82,7 @@ export default class AutomaticsManager {
     private async setUpAutoCommitAndSync() {
         if (this.plugin.settings.setLastSaveToLastCommit) {
             this.clearAutoCommitAndSync();
-            const lastCommitDate =
-                await this.plugin.gitManager.getLastCommitTime();
+            const lastCommitDate = await this.plugin.gitManager.getLastCommitTime();
             if (lastCommitDate) {
                 this.saveLastAuto(lastCommitDate, "backup");
             }
@@ -109,10 +92,7 @@ export default class AutomaticsManager {
             const lastAutos = this.loadLastAuto();
 
             if (this.plugin.settings.autoSaveInterval > 0) {
-                const diff = this.diff(
-                    this.plugin.settings.autoSaveInterval,
-                    lastAutos.backup
-                );
+                const diff = this.diff(this.plugin.settings.autoSaveInterval, lastAutos.backup);
                 this.startAutoCommitAndSync(diff);
             }
         }
@@ -124,19 +104,12 @@ export default class AutomaticsManager {
             if (minutes === 0) {
                 this.doAutoCommitAndSync();
             } else {
-                this.plugin.autoCommitDebouncer = debounce(
-                    () => this.doAutoCommitAndSync(),
-                    time,
-                    true
-                );
+                this.plugin.autoCommitDebouncer = debounce(() => this.doAutoCommitAndSync(), time, true);
             }
         } else {
             // max timeout in js
             if (time > 2147483647) time = 2147483647;
-            this.timeoutIDCommitAndSync = window.setTimeout(
-                () => this.doAutoCommitAndSync(),
-                time
-            );
+            this.timeoutIDCommitAndSync = window.setTimeout(() => this.doAutoCommitAndSync(), time);
         }
     }
 
@@ -147,14 +120,10 @@ export default class AutomaticsManager {
                 // Re-check if the auto commit should run now or be postponed,
                 // because the last commit time has changed
                 if (this.plugin.settings.setLastSaveToLastCommit) {
-                    const lastCommitDate =
-                        await this.plugin.gitManager.getLastCommitTime();
+                    const lastCommitDate = await this.plugin.gitManager.getLastCommitTime();
                     if (lastCommitDate) {
                         this.saveLastAuto(lastCommitDate, "backup");
-                        const diff = this.diff(
-                            this.plugin.settings.autoSaveInterval,
-                            lastCommitDate
-                        );
+                        const diff = this.diff(this.plugin.settings.autoSaveInterval, lastCommitDate);
                         if (diff > 0) {
                             this.startAutoCommitAndSync(diff);
                             // Return false to mark the next iteration
@@ -256,9 +225,7 @@ export default class AutomaticsManager {
      */
     private diff(setting: number, lastAuto: Date) {
         const now = new Date();
-        const diff =
-            setting -
-            Math.round((now.getTime() - lastAuto.getTime()) / 1000 / 60);
+        const diff = setting - Math.round((now.getTime() - lastAuto.getTime()) / 1000 / 60);
         return Math.max(0, diff);
     }
 }

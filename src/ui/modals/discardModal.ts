@@ -19,13 +19,7 @@ export class DiscardModal extends Modal {
     onOpen() {
         const { contentEl, titleEl } = this;
         titleEl.setText(`${this.deletion ? "Delete" : "Discard"} this file?`);
-        contentEl
-            .createEl("p")
-            .setText(
-                `Do you really want to ${
-                    this.deletion ? "delete" : "discard the changes of"
-                } "${this.filename}"`
-            );
+        contentEl.createEl("p").setText(`Do you really want to ${this.deletion ? "delete" : "discard the changes of"} "${this.filename}"`);
         const div = contentEl.createDiv({ cls: "modal-button-container" });
 
         const discard = div.createEl("button", {

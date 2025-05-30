@@ -96,9 +96,7 @@ export class MyAdapter {
         const all = [...res.files, ...res.folders];
         let formattedAll;
         if (path !== "/") {
-            formattedAll = all.map((e) =>
-                normalizePath(e.substring(path.length))
-            );
+            formattedAll = all.map((e) => normalizePath(e.substring(path.length)));
         } else {
             formattedAll = all;
         }
@@ -113,11 +111,7 @@ export class MyAdapter {
     }
     async stat(path: string) {
         if (path.endsWith(this.gitDir + "/index")) {
-            if (
-                this.index !== undefined &&
-                this.indexctime != undefined &&
-                this.indexmtime != undefined
-            ) {
+            if (this.index !== undefined && this.indexctime != undefined && this.indexmtime != undefined) {
                 return {
                     isFile: () => true,
                     isDirectory: () => false,
@@ -192,16 +186,10 @@ export class MyAdapter {
 
     async saveAndClear(): Promise<void> {
         if (this.index !== undefined) {
-            await this.adapter.writeBinary(
-                this.plugin.gitManager.getRelativeVaultPath(
-                    this.gitDir + "/index"
-                ),
-                this.index,
-                {
-                    ctime: this.indexctime,
-                    mtime: this.indexmtime,
-                }
-            );
+            await this.adapter.writeBinary(this.plugin.gitManager.getRelativeVaultPath(this.gitDir + "/index"), this.index, {
+                ctime: this.indexctime,
+                mtime: this.indexmtime,
+            });
         }
         this.clearIndex();
     }

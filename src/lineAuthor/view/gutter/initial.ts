@@ -3,10 +3,7 @@ import { DEFAULT_SETTINGS } from "src/constants";
 import type { LineAuthoring, LineAuthorSettings } from "src/lineAuthor/model";
 import { latestSettings, maxAgeInDaysFromSettings } from "src/lineAuthor/model";
 import { computeAdaptiveInitialColoringAgeInDays } from "src/lineAuthor/view/cache";
-import {
-    lineAuthoringGutterMarker,
-    TextGutter,
-} from "src/lineAuthor/view/gutter/gutter";
+import { lineAuthoringGutterMarker, TextGutter } from "src/lineAuthor/view/gutter/gutter";
 import type { Blame, BlameCommit, GitTimestamp, UserEmail } from "src/types";
 import { momentToEpochSeconds } from "src/utils";
 
@@ -16,9 +13,7 @@ import { momentToEpochSeconds } from "src/utils";
  * Until the true length is known, it uses the last saved `gutterSpacingFallbackLength`.
  */
 export function initialSpacingGutter() {
-    const length =
-        latestSettings.get()?.gutterSpacingFallbackLength ??
-        DEFAULT_SETTINGS.lineAuthor.gutterSpacingFallbackLength;
+    const length = latestSettings.get()?.gutterSpacingFallbackLength ?? DEFAULT_SETTINGS.lineAuthor.gutterSpacingFallbackLength;
     return new TextGutter(Array(length).fill("-").join(""));
 }
 
@@ -28,8 +23,7 @@ export function initialSpacingGutter() {
  * **DO NOT CACHE THIS FUNCTION CALL, AS THE ADAPTIVE COLOR NEED TO BE FRESHLY CALCULATED.**
  */
 export function initialLineAuthoringGutter(settings: LineAuthorSettings) {
-    const { lineAuthoring, ageForInitialRender } =
-        adaptiveInitialColoredWaitingLineAuthoring(settings);
+    const { lineAuthoring, ageForInitialRender } = adaptiveInitialColoredWaitingLineAuthoring(settings);
     return lineAuthoringGutterMarker(
         lineAuthoring,
         1,
@@ -50,20 +44,13 @@ export function initialLineAuthoringGutter(settings: LineAuthorSettings) {
  * We use a waiting-gutter, to have it rendered - so that we can use it's rendered text
  * and transform it into unintrusive placeholder characters.
  */
-export function adaptiveInitialColoredWaitingLineAuthoring(
-    settings: LineAuthorSettings
-): {
+export function adaptiveInitialColoredWaitingLineAuthoring(settings: LineAuthorSettings): {
     lineAuthoring: Exclude<LineAuthoring, "untracked">;
     ageForInitialRender: number;
 } {
-    const ageForInitialRender: number =
-        computeAdaptiveInitialColoringAgeInDays() ??
-        maxAgeInDaysFromSettings(settings) * 0.25;
+    const ageForInitialRender: number = computeAdaptiveInitialColoringAgeInDays() ?? maxAgeInDaysFromSettings(settings) * 0.25;
 
-    const slightlyOlderAgeForInitialRender: moment.Moment = moment().add(
-        -ageForInitialRender,
-        "days"
-    );
+    const slightlyOlderAgeForInitialRender: moment.Moment = moment().add(-ageForInitialRender, "days");
 
     const dummyAuthor = <UserEmail & GitTimestamp>{
         name: "",

@@ -6,21 +6,14 @@ import { pluginRef } from "src/pluginGlobalRef";
 import type { BlameCommit } from "src/types";
 import { impossibleBranch } from "src/utils";
 
-type ContextMenuConfigurableSettingsKeys =
-    | "showCommitHash"
-    | "authorDisplay"
-    | "dateTimeFormatOptions";
+type ContextMenuConfigurableSettingsKeys = "showCommitHash" | "authorDisplay" | "dateTimeFormatOptions";
 
 type CtxMenuCommitInfo = Pick<BlameCommit, "hash" | "isZeroCommit"> & {
     isWaitingGutter: boolean;
 };
 const COMMIT_ATTR = "data-commit";
 
-export function handleContextMenu(
-    menu: Menu,
-    editor: Editor,
-    _mdv: MarkdownView
-) {
+export function handleContextMenu(menu: Menu, editor: Editor, _mdv: MarkdownView) {
     // Click was inside text-editor with active cursor. Don't trigger there.
     if (editor.hasFocus()) return;
 
@@ -50,19 +43,13 @@ function addCopyHashMenuItem(commit: CtxMenuCommitInfo, menu: Menu) {
     );
 }
 
-function addConfigurableLineAuthorSettings(
-    key: ContextMenuConfigurableSettingsKeys,
-    menu: Menu
-) {
+function addConfigurableLineAuthorSettings(key: ContextMenuConfigurableSettingsKeys, menu: Menu) {
     let title: string;
     let actionNewValue: LineAuthorSettings[typeof key];
 
     const settings = pluginRef.plugin!.settings.lineAuthor;
     const currentValue = settings[key];
-    const currentlyShown =
-        typeof currentValue === "boolean"
-            ? currentValue
-            : currentValue !== "hide";
+    const currentlyShown = typeof currentValue === "boolean" ? currentValue : currentValue !== "hide";
 
     const defaultValue = DEFAULT_SETTINGS.lineAuthor[key];
 
@@ -74,8 +61,7 @@ function addConfigurableLineAuthorSettings(
         title = "Show author " + (currentlyShown ? currentValue : showOption);
         actionNewValue = currentlyShown ? "hide" : showOption;
     } else if (key === "dateTimeFormatOptions") {
-        const showOption =
-            settings.lastShownDateTimeFormatOptions ?? defaultValue;
+        const showOption = settings.lastShownDateTimeFormatOptions ?? defaultValue;
         title = "Show " + (currentlyShown ? currentValue : showOption);
         title += !title.contains("date") ? " date" : "";
         actionNewValue = currentlyShown ? "hide" : showOption;
@@ -88,20 +74,11 @@ function addConfigurableLineAuthorSettings(
             .setTitle(title)
             .setSection("obs-git-line-author-configure") // group settings together
             .setChecked(currentlyShown)
-            .onClick((_e) =>
-                pluginRef.plugin?.settingsTab?.lineAuthorSettingHandler(
-                    key,
-                    actionNewValue
-                )
-            )
+            .onClick((_e) => pluginRef.plugin?.settingsTab?.lineAuthorSettingHandler(key, actionNewValue))
     );
 }
 
-export function enrichCommitInfoForContextMenu(
-    commit: BlameCommit,
-    isWaitingGutter: boolean,
-    elt: HTMLElement
-) {
+export function enrichCommitInfoForContextMenu(commit: BlameCommit, isWaitingGutter: boolean, elt: HTMLElement) {
     elt.setAttr(
         COMMIT_ATTR,
         JSON.stringify(<CtxMenuCommitInfo>{
@@ -114,7 +91,5 @@ export function enrichCommitInfoForContextMenu(
 
 function getCommitInfo(elt: HTMLElement): CtxMenuCommitInfo | undefined {
     const commitInfoStr = elt.getAttr(COMMIT_ATTR);
-    return commitInfoStr
-        ? (JSON.parse(commitInfoStr) as CtxMenuCommitInfo)
-        : undefined;
+    return commitInfoStr ? (JSON.parse(commitInfoStr) as CtxMenuCommitInfo) : undefined;
 }

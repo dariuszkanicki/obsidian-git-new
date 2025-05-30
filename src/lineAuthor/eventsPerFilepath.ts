@@ -1,7 +1,4 @@
-import type {
-    LineAuthoringSubscriber,
-    LineAuthoringSubscribers,
-} from "src/lineAuthor/control";
+import type { LineAuthoringSubscriber, LineAuthoringSubscribers } from "src/lineAuthor/control";
 
 const SECONDS = 1000;
 const REMOVE_STALES_FREQUENCY = 60 * SECONDS;
@@ -13,8 +10,7 @@ const REMOVE_STALES_FREQUENCY = 60 * SECONDS;
  * * Subscribers can be cleared when the feature is deactivated
  */
 class EventsPerFilePath {
-    private eventsPerFilepath: Map<string, LineAuthoringSubscribers> =
-        new Map();
+    private eventsPerFilepath: Map<string, LineAuthoringSubscribers> = new Map();
     private removeStalesSubscribersTimer: number;
 
     constructor() {
@@ -35,15 +31,12 @@ class EventsPerFilePath {
         return handler(this.eventsPerFilepath.get(filepath)!);
     }
 
-    public forEachSubscriber(
-        handler: (las: LineAuthoringSubscriber) => void
-    ): void {
+    public forEachSubscriber(handler: (las: LineAuthoringSubscriber) => void): void {
         this.eventsPerFilepath.forEach((subs) => subs.forEach(handler));
     }
 
     private ensureInitialized(filepath: string) {
-        if (!this.eventsPerFilepath.get(filepath))
-            this.eventsPerFilepath.set(filepath, new Set());
+        if (!this.eventsPerFilepath.get(filepath)) this.eventsPerFilepath.set(filepath, new Set());
     }
 
     private startRemoveStalesSubscribersInterval() {

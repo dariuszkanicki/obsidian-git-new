@@ -9,13 +9,7 @@ import { history, indentWithTab, standardKeymap } from "@codemirror/commands";
 import { MergeView } from "@codemirror/merge";
 import { highlightSelectionMatches, search } from "@codemirror/search";
 import { EditorState, Transaction } from "@codemirror/state";
-import {
-    drawSelection,
-    EditorView,
-    keymap,
-    lineNumbers,
-    ViewPlugin,
-} from "@codemirror/view";
+import { drawSelection, EditorView, keymap, lineNumbers, ViewPlugin } from "@codemirror/view";
 import { GitError } from "simple-git";
 
 // This class is not extending `FileView', because it needs a `TFile`, which is not possible for dot files like `.gitignore`, which this editor should support as well.`
@@ -55,10 +49,7 @@ export default class SplitDiffView extends ItemView {
 
         this.registerEvent(
             this.app.vault.on("modify", (file) => {
-                if (
-                    this.state.bRef == undefined &&
-                    file.path === this.state.bFile
-                ) {
+                if (this.state.bRef == undefined && file.path === this.state.bFile) {
                     if (this.ignoreNextModification) {
                         this.ignoreNextModification = false;
                     } else {
@@ -69,10 +60,7 @@ export default class SplitDiffView extends ItemView {
         );
         this.registerEvent(
             this.app.vault.on("delete", (file) => {
-                if (
-                    this.state.bRef == undefined &&
-                    file.path === this.state.bFile
-                ) {
+                if (this.state.bRef == undefined && file.path === this.state.bFile) {
                     // If the file got deleted, we need to recreate the view to make the editor read-only
                     this.createMergeView().catch(console.error);
                 }
@@ -80,10 +68,7 @@ export default class SplitDiffView extends ItemView {
         );
         this.registerEvent(
             this.app.vault.on("create", (file) => {
-                if (
-                    this.state.bRef == undefined &&
-                    file.path === this.state.bFile
-                ) {
+                if (this.state.bRef == undefined && file.path === this.state.bFile) {
                     // If the file got created, we need to recreate the view to make the editor editable
                     this.createMergeView().catch(console.error);
                 }
@@ -91,11 +76,7 @@ export default class SplitDiffView extends ItemView {
         );
         this.registerEvent(
             this.app.vault.on("rename", (file, oldPath) => {
-                if (
-                    this.state.bRef == undefined &&
-                    (file.path === this.state.bFile ||
-                        oldPath === this.state.bFile)
-                ) {
+                if (this.state.bRef == undefined && (file.path === this.state.bFile || oldPath === this.state.bFile)) {
                     // If the file got created, we need to recreate the view to make the editor editable
                     this.createMergeView().catch(console.error);
                 }
@@ -107,9 +88,7 @@ export default class SplitDiffView extends ItemView {
                 const file = this.state.bFile;
                 if (file) {
                     this.ignoreNextModification = true;
-                    this.plugin.app.vault.adapter
-                        .write(file, data)
-                        .catch((e) => this.plugin.displayError(e));
+                    this.plugin.app.vault.adapter.write(file, data).catch((e) => this.plugin.displayError(e));
                 }
             },
             1000,
@@ -163,11 +142,7 @@ export default class SplitDiffView extends ItemView {
 
     async gitShow(commitHash: string, file: string): Promise<string> {
         try {
-            return await (this.plugin.gitManager as SimpleGit).show(
-                commitHash,
-                file,
-                false
-            );
+            return await (this.plugin.gitManager as SimpleGit).show(commitHash, file, false);
         } catch (error) {
             if (error instanceof GitError) {
                 if (
@@ -192,9 +167,7 @@ export default class SplitDiffView extends ItemView {
         if (this.state.bRef != undefined) {
             return false;
         }
-        const bVaultPath = this.plugin.gitManager.getRelativeVaultPath(
-            this.state.bFile
-        );
+        const bVaultPath = this.plugin.gitManager.getRelativeVaultPath(this.state.bFile);
         return await this.app.vault.adapter.exists(bVaultPath);
     }
 
@@ -263,12 +236,7 @@ export default class SplitDiffView extends ItemView {
     }
 
     async createMergeView() {
-        if (
-            this.state?.aFile &&
-            this.state?.bFile &&
-            !this.refreshing &&
-            this.plugin.gitManager
-        ) {
+        if (this.state?.aFile && this.state?.bFile && !this.refreshing && this.plugin.gitManager) {
             this.refreshing = true;
 
             // cleanup
@@ -286,9 +254,7 @@ export default class SplitDiffView extends ItemView {
             if (this.state.bRef != undefined) {
                 bText = await this.gitShow(this.state.bRef, this.state.bFile);
             } else {
-                const bVaultPath = this.plugin.gitManager.getRelativeVaultPath(
-                    this.state.bFile
-                );
+                const bVaultPath = this.plugin.gitManager.getRelativeVaultPath(this.state.bFile);
                 if (await this.app.vault.adapter.exists(bVaultPath)) {
                     bText = await this.app.vault.adapter.read(bVaultPath);
                 } else {
@@ -310,12 +276,7 @@ export default class SplitDiffView extends ItemView {
             const myView = this;
             const autoSavePlugin = ViewPlugin.define((view) => ({
                 update(update) {
-                    if (
-                        update.docChanged &&
-                        !update.transactions.some((tr) =>
-                            tr.annotation(Transaction.remote)
-                        )
-                    ) {
+                    if (update.docChanged && !update.transactions.some((tr) => tr.annotation(Transaction.remote))) {
                         const lhsContent = view.state.doc.toString();
                         myView.fileSaveDebouncer(lhsContent);
                     }
@@ -324,21 +285,14 @@ export default class SplitDiffView extends ItemView {
 
             const aState = {
                 doc: aText,
-                extensions: [
-                    ...basicExtensions,
-                    EditorView.editable.of(false),
-                    EditorState.readOnly.of(true),
-                ],
+                extensions: [...basicExtensions, EditorView.editable.of(false), EditorState.readOnly.of(true)],
             };
 
             const bExtensions = [...basicExtensions];
 
             // Only make the editor modifiable when viewing the working tree version
             if (!this.bIsEditable) {
-                bExtensions.push(
-                    EditorView.editable.of(false),
-                    EditorState.readOnly.of(true)
-                );
+                bExtensions.push(EditorView.editable.of(false), EditorState.readOnly.of(true));
             } else {
                 bExtensions.push(autoSavePlugin);
             }
@@ -348,12 +302,7 @@ export default class SplitDiffView extends ItemView {
                 extensions: bExtensions,
             };
 
-            container.addClasses([
-                "cm-s-obsidian",
-                "mod-cm6",
-                "markdown-source-view",
-                "cm-content",
-            ]);
+            container.addClasses(["cm-s-obsidian", "mod-cm6", "markdown-source-view", "cm-content"]);
 
             this.mergeView = new MergeView({
                 b: bState,

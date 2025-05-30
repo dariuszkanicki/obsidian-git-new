@@ -3,13 +3,7 @@
     import { hoverPreview } from "obsidian-community-lib";
     import type { GitManager } from "src/gitManager/gitManager";
     import type { FileStatusResult } from "src/types";
-    import {
-        fileIsBinary,
-        fileOpenableInObsidian,
-        getDisplayPath,
-        getNewLeaf,
-        mayTriggerFileMenu,
-    } from "src/utils";
+    import { fileIsBinary, fileOpenableInObsidian, getDisplayPath, getNewLeaf, mayTriggerFileMenu } from "src/utils";
     import type GitView from "../sourceControl";
 
     interface Props {
@@ -86,14 +80,7 @@
     onclick={mainClick}
     onauxclick={(event) => {
         event.stopPropagation();
-        if (event.button == 2)
-            mayTriggerFileMenu(
-                view.app,
-                event,
-                change.vaultPath,
-                view.leaf,
-                "git-source-control"
-            );
+        if (event.button == 2) mayTriggerFileMenu(view.app, event, change.vaultPath, view.leaf, "git-source-control");
         else mainClick(event);
     }}
     class="tree-item nav-file"
@@ -110,21 +97,9 @@
         <div class="git-tools">
             <div class="buttons">
                 {#if fileOpenableInObsidian(change.vaultPath, view.app)}
-                    <div
-                        data-icon="go-to-file"
-                        aria-label="Open File"
-                        bind:this={buttons[0]}
-                        onclick={open}
-                        class="clickable-icon"
-                    ></div>
+                    <div data-icon="go-to-file" aria-label="Open File" bind:this={buttons[0]} onclick={open} class="clickable-icon"></div>
                 {/if}
-                <div
-                    data-icon="minus"
-                    aria-label="Unstage"
-                    bind:this={buttons[1]}
-                    onclick={unstage}
-                    class="clickable-icon"
-                ></div>
+                <div data-icon="minus" aria-label="Unstage" bind:this={buttons[1]} onclick={unstage} class="clickable-icon"></div>
             </div>
             <div class="type" data-type={change.index}>{change.index}</div>
         </div>

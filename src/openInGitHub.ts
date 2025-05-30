@@ -3,11 +3,7 @@ import { Notice } from "obsidian";
 import type { GitManager } from "./gitManager/gitManager";
 import { SimpleGit } from "./gitManager/simpleGit";
 
-export async function openLineInGitHub(
-    editor: Editor,
-    file: TFile,
-    manager: GitManager
-) {
+export async function openLineInGitHub(editor: Editor, file: TFile, manager: GitManager) {
     const data = await getData(file, manager);
 
     if (data.result === "failure") {
@@ -20,13 +16,9 @@ export async function openLineInGitHub(
         const from = editor.getCursor("from").line + 1;
         const to = editor.getCursor("to").line + 1;
         if (from === to) {
-            window.open(
-                `https://github.com/${user}/${repo}/blob/${branch}/${filePath}?plain=1#L${from}`
-            );
+            window.open(`https://github.com/${user}/${repo}/blob/${branch}/${filePath}?plain=1#L${from}`);
         } else {
-            window.open(
-                `https://github.com/${user}/${repo}/blob/${branch}/${filePath}?plain=1#L${from}-L${to}`
-            );
+            window.open(`https://github.com/${user}/${repo}/blob/${branch}/${filePath}?plain=1#L${from}-L${to}`);
         }
     } else {
         new Notice("It seems like you are not using GitHub");
@@ -44,9 +36,7 @@ export async function openHistoryInGitHub(file: TFile, manager: GitManager) {
     const { isGitHub, branch, repo, user, filePath } = data;
 
     if (isGitHub) {
-        window.open(
-            `https://github.com/${user}/${repo}/commits/${branch}/${filePath}`
-        );
+        window.open(`https://github.com/${user}/${repo}/commits/${branch}/${filePath}`);
     } else {
         new Notice("It seems like you are not using GitHub");
     }
@@ -73,9 +63,7 @@ async function getData(
     let filePath = manager.getRelativeRepoPath(file.path);
 
     if (manager instanceof SimpleGit) {
-        const submodule = await manager.getSubmoduleOfFile(
-            manager.getRelativeRepoPath(file.path)
-        );
+        const submodule = await manager.getSubmoduleOfFile(manager.getRelativeRepoPath(file.path));
         if (submodule) {
             filePath = submodule.relativeFilepath;
             const status = await manager.git
@@ -88,10 +76,7 @@ async function getData(
             remoteBranch = status.tracking || undefined;
             branch = status.current || undefined;
             if (remoteBranch) {
-                const remote = remoteBranch.substring(
-                    0,
-                    remoteBranch.indexOf("/")
-                );
+                const remote = remoteBranch.substring(0, remoteBranch.indexOf("/"));
 
                 const config = await manager.git
                     .cwd({
@@ -136,9 +121,7 @@ async function getData(
             };
         }
     }
-    const res = remoteUrl.match(
-        /(?:^https:\/\/github\.com\/(.+)\/(.+?)(?:\.git)?$)|(?:^[a-zA-Z]+@github\.com:(.+)\/(.+?)(?:\.git)?$)/
-    );
+    const res = remoteUrl.match(/(?:^https:\/\/github\.com\/(.+)\/(.+?)(?:\.git)?$)|(?:^[a-zA-Z]+@github\.com:(.+)\/(.+?)(?:\.git)?$)/);
     if (res == null) {
         return {
             result: "failure",

@@ -1,14 +1,6 @@
 import { type App, moment } from "obsidian";
 import type ObsidianGit from "../main";
-import type {
-    BranchInfo,
-    DiffFile,
-    FileStatusResult,
-    LogEntry,
-    Status,
-    TreeItem,
-    UnstagedFile,
-} from "../types";
+import type { BranchInfo, DiffFile, FileStatusResult, LogEntry, Status, TreeItem, UnstagedFile } from "../types";
 
 export abstract class GitManager {
     readonly plugin: ObsidianGit;
@@ -27,10 +19,7 @@ export abstract class GitManager {
         amend?: boolean;
     }): Promise<number | undefined>;
 
-    abstract commit(_: {
-        message: string;
-        amend?: boolean;
-    }): Promise<number | undefined>;
+    abstract commit(_: { message: string; amend?: boolean }): Promise<number | undefined>;
 
     abstract stageAll(_: { dir?: string; status?: Status }): Promise<void>;
 
@@ -52,9 +41,7 @@ export abstract class GitManager {
 
     abstract canPush(): Promise<boolean>;
 
-    abstract checkRequirements(): Promise<
-        "valid" | "missing-repo" | "missing-git"
-    >;
+    abstract checkRequirements(): Promise<"valid" | "missing-repo" | "missing-git">;
 
     abstract branchInfo(): Promise<BranchInfo>;
 
@@ -70,10 +57,7 @@ export abstract class GitManager {
 
     abstract clone(url: string, dir: string, depth?: number): Promise<void>;
 
-    abstract setConfig(
-        path: string,
-        value: string | number | boolean | undefined
-    ): Promise<void>;
+    abstract setConfig(path: string, value: string | number | boolean | undefined): Promise<void>;
 
     abstract getConfig(path: string): Promise<string | undefined>;
 
@@ -85,12 +69,7 @@ export abstract class GitManager {
 
     abstract getRemoteUrl(remote: string): Promise<string | undefined>;
 
-    abstract log(
-        file: string | undefined,
-        relativeToVault?: boolean,
-        limit?: number,
-        ref?: string
-    ): Promise<LogEntry[]>;
+    abstract log(file: string | undefined, relativeToVault?: boolean, limit?: number, ref?: string): Promise<LogEntry[]>;
 
     abstract getRemoteBranches(remote: string): Promise<string[]>;
 
@@ -102,11 +81,7 @@ export abstract class GitManager {
 
     abstract updateBasePath(basePath: string): Promise<void>;
 
-    abstract getDiffString(
-        filePath: string,
-        stagedChanges: boolean,
-        hash?: string
-    ): Promise<string>;
+    abstract getDiffString(filePath: string, stagedChanges: boolean, hash?: string): Promise<string>;
 
     abstract getLastCommitTime(): Promise<Date | undefined>;
 
@@ -122,16 +97,11 @@ export abstract class GitManager {
     // Constructs a path relative to the git repository from a path relative to the vault
     //
     // @param doConversion - If false, the path is returned as is. This is added because that parameter is often passed on to functions where this method is called.
-    getRelativeRepoPath(
-        filePath: string,
-        doConversion: boolean = true
-    ): string {
+    getRelativeRepoPath(filePath: string, doConversion: boolean = true): string {
         if (doConversion) {
             if (this.plugin.settings.basePath.length > 0) {
                 //Expect the case that the git repository is located inside the vault on mobile platform currently.
-                return filePath.substring(
-                    this.plugin.settings.basePath.length + 1
-                );
+                return filePath.substring(this.plugin.settings.basePath.length + 1);
             }
         }
         return filePath;
@@ -139,10 +109,7 @@ export abstract class GitManager {
 
     unload(): void {}
 
-    private _getTreeStructure<T = DiffFile | FileStatusResult>(
-        children: (T & { path: string })[],
-        beginLength = 0
-    ): TreeItem<T>[] {
+    private _getTreeStructure<T = DiffFile | FileStatusResult>(children: (T & { path: string })[], beginLength = 0): TreeItem<T>[] {
         const list: TreeItem<T>[] = [];
         children = [...children];
         while (children.length > 0) {
@@ -151,24 +118,17 @@ export abstract class GitManager {
             if (restPath.contains("/")) {
                 const title = restPath.substring(0, restPath.indexOf("/"));
                 const childrenWithSameTitle = children.filter((item) => {
-                    return item.path
-                        .substring(beginLength)
-                        .startsWith(title + "/");
+                    return item.path.substring(beginLength).startsWith(title + "/");
                 });
                 childrenWithSameTitle.forEach((item) => children.remove(item));
-                const path = first.path.substring(
-                    0,
-                    restPath.indexOf("/") + beginLength
-                );
+                const path = first.path.substring(0, restPath.indexOf("/") + beginLength);
                 list.push({
                     title: title,
                     path: path,
                     vaultPath: this.getRelativeVaultPath(path),
                     children: this._getTreeStructure(
                         childrenWithSameTitle,
-                        (beginLength > 0
-                            ? beginLength + title.length
-                            : title.length) + 1
+                        (beginLength > 0 ? beginLength + title.length : title.length) + 1
                     ),
                 });
             } else {
@@ -192,17 +152,9 @@ export abstract class GitManager {
         for (const node of tree) {
             while (true) {
                 const singleChild = node.children?.length == 1;
-                const singleChildIsDir =
-                    node.children?.first()?.data == undefined;
+                const singleChildIsDir = node.children?.first()?.data == undefined;
 
-                if (
-                    !(
-                        node.children != undefined &&
-                        singleChild &&
-                        singleChildIsDir
-                    )
-                )
-                    break;
+                if (!(node.children != undefined && singleChild && singleChildIsDir)) break;
                 const child = node.children.first()!;
                 node.title += "/" + child.title;
                 node.data = child.data;
@@ -214,9 +166,7 @@ export abstract class GitManager {
                 this.simplify<T>(node.children);
             }
             node.children?.sort((a, b) => {
-                const dirCompare =
-                    (b.data == undefined ? 1 : 0) -
-                    (a.data == undefined ? 1 : 0);
+                const dirCompare = (b.data == undefined ? 1 : 0) - (a.data == undefined ? 1 : 0);
                 if (dirCompare != 0) {
                     return dirCompare;
                 } else {
@@ -225,8 +175,7 @@ export abstract class GitManager {
             });
         }
         return tree.sort((a, b) => {
-            const dirCompare =
-                (b.data == undefined ? 1 : 0) - (a.data == undefined ? 1 : 0);
+            const dirCompare = (b.data == undefined ? 1 : 0) - (a.data == undefined ? 1 : 0);
             if (dirCompare != 0) {
                 return dirCompare;
             } else {
@@ -235,9 +184,7 @@ export abstract class GitManager {
         });
     }
 
-    getTreeStructure<T = DiffFile | FileStatusResult>(
-        children: (T & { path: string })[]
-    ): TreeItem<T>[] {
+    getTreeStructure<T = DiffFile | FileStatusResult>(children: (T & { path: string })[]): TreeItem<T>[] {
         const tree = this._getTreeStructure<T>(children);
 
         const res = this.simplify<T>(tree);
@@ -284,10 +231,7 @@ export abstract class GitManager {
             template = template.replace("{{files}}", files);
         }
 
-        template = template.replace(
-            "{{date}}",
-            moment().format(this.plugin.settings.commitDateFormat)
-        );
+        template = template.replace("{{date}}", moment().format(this.plugin.settings.commitDateFormat));
         if (this.plugin.settings.listChangedFilesInMessageBody) {
             const status2 = status ?? (await this.status());
             let files = "";

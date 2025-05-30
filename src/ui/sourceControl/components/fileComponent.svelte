@@ -4,13 +4,7 @@
     import type { GitManager } from "src/gitManager/gitManager";
     import type { FileStatusResult } from "src/types";
     import { DiscardModal } from "src/ui/modals/discardModal";
-    import {
-        fileIsBinary,
-        fileOpenableInObsidian,
-        getDisplayPath,
-        getNewLeaf,
-        mayTriggerFileMenu,
-    } from "src/utils";
+    import { fileIsBinary, fileOpenableInObsidian, getDisplayPath, getNewLeaf, mayTriggerFileMenu } from "src/utils";
     import type GitView from "../sourceControl";
 
     interface Props {
@@ -84,13 +78,9 @@
             (shouldDiscard) => {
                 if (shouldDiscard === true) {
                     if (deleteFile) {
-                        return view.app.vault.adapter
-                            .remove(change.vaultPath)
-                            .finally(() => {
-                                view.app.workspace.trigger(
-                                    "obsidian-git:refresh"
-                                );
-                            });
+                        return view.app.vault.adapter.remove(change.vaultPath).finally(() => {
+                            view.app.workspace.trigger("obsidian-git:refresh");
+                        });
                     } else {
                         return manager.discard(change.path).finally(() => {
                             view.app.workspace.trigger("obsidian-git:refresh");
@@ -114,14 +104,7 @@
     onclick={mainClick}
     onauxclick={(event) => {
         event.stopPropagation();
-        if (event.button == 2)
-            mayTriggerFileMenu(
-                view.app,
-                event,
-                change.vaultPath,
-                view.leaf,
-                "git-source-control"
-            );
+        if (event.button == 2) mayTriggerFileMenu(view.app, event, change.vaultPath, view.leaf, "git-source-control");
         else mainClick(event);
     }}
     class="tree-item nav-file"
@@ -152,20 +135,8 @@
                         class="clickable-icon"
                     ></div>
                 {/if}
-                <div
-                    data-icon="undo"
-                    aria-label="Discard"
-                    bind:this={buttons[1]}
-                    onclick={discard}
-                    class="clickable-icon"
-                ></div>
-                <div
-                    data-icon="plus"
-                    aria-label="Stage"
-                    bind:this={buttons[2]}
-                    onclick={stage}
-                    class="clickable-icon"
-                ></div>
+                <div data-icon="undo" aria-label="Discard" bind:this={buttons[1]} onclick={discard} class="clickable-icon"></div>
+                <div data-icon="plus" aria-label="Stage" bind:this={buttons[2]} onclick={stage} class="clickable-icon"></div>
             </div>
             <div class="type" data-type={change.workingDir}>
                 {change.workingDir}

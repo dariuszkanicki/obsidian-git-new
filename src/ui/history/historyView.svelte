@@ -27,10 +27,7 @@
         }
     });
 
-    refreshRef = view.app.workspace.on(
-        "obsidian-git:head-change",
-        () => void refresh().catch(console.error)
-    );
+    refreshRef = view.app.workspace.on("obsidian-git:head-change", () => void refresh().catch(console.error));
 
     $effect(() => {
         buttons.forEach((btn) => setIcon(btn, btn.getAttr("data-icon")!));
@@ -86,12 +83,7 @@
         loading = true;
         const isSimpleGit = plugin.gitManager instanceof SimpleGit;
         const limit = isSimpleGit ? 50 : 10;
-        const newLogs = await plugin.gitManager.log(
-            undefined,
-            false,
-            limit,
-            logs.last()?.hash
-        );
+        const newLogs = await plugin.gitManager.log(undefined, false, limit, logs.last()?.hash);
         // Remove the first element of the new logs, as it is the same as the last element of the current logs.
         // And don't use hash^ as it fails for the first commit.
         logs.push(...newLogs.slice(1));

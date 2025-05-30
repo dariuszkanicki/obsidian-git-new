@@ -1,8 +1,4 @@
-import type {
-    AnnotationType,
-    EditorState,
-    Transaction,
-} from "@codemirror/state";
+import type { AnnotationType, EditorState, Transaction } from "@codemirror/state";
 import { Annotation, StateField } from "@codemirror/state";
 import type { Hasher } from "js-sha256";
 import { sha256 } from "js-sha256";
@@ -47,11 +43,7 @@ export type LineAuthoring = Blame | "untracked";
  */
 export type LineAuthoringId = string;
 
-export function lineAuthoringId(
-    head: string,
-    objHash: string,
-    path: string
-): string | undefined {
+export function lineAuthoringId(head: string, objHash: string, path: string): string | undefined {
     if (head === undefined || objHash === undefined || path === undefined) {
         return undefined;
     }
@@ -76,14 +68,9 @@ export type LineAuthoringWithChanges = {
  * See users of {@link newComputationResultAsTransaction} for the value providers.
  * The {@link StateField} {@link lineAuthorState} hold the value of this transaction.
  */
-const LineAuthoringContainerType: AnnotationType<LineAuthoringWithChanges> =
-    Annotation.define<LineAuthoringWithChanges>();
+const LineAuthoringContainerType: AnnotationType<LineAuthoringWithChanges> = Annotation.define<LineAuthoringWithChanges>();
 
-export function newComputationResultAsTransaction(
-    key: LineAuthoringId,
-    la: LineAuthoring,
-    state: EditorState
-): Transaction {
+export function newComputationResultAsTransaction(key: LineAuthoringId, la: LineAuthoring, state: EditorState): Transaction {
     return state.update({
         annotations: LineAuthoringContainerType.of({
             key,
@@ -93,9 +80,7 @@ export function newComputationResultAsTransaction(
     });
 }
 
-function getLineAuthorAnnotation(
-    tr: Transaction
-): LineAuthoringWithChanges | undefined {
+function getLineAuthorAnnotation(tr: Transaction): LineAuthoringWithChanges | undefined {
     return tr.annotation(LineAuthoringContainerType);
 }
 
@@ -114,39 +99,33 @@ function getLineAuthorAnnotation(
  *
  * When caching this, please use {@link laStateDigest} to compute the key.
  */
-export const lineAuthorState: StateField<LineAuthoringWithChanges | undefined> =
-    StateField.define<LineAuthoringWithChanges | undefined>({
-        create: (_state) => undefined,
-        /**
-         * The state can be updated from either an annotated transaction containing
-         * the newest line authoring (for the saved document) - or from
-         * unsaved changes of the document as the user is actively typing in the editor.
-         *
-         * In the first case, we take the new line authoring and discard anything we had remembered
-         * from unsaved changes. In the second case, we use the unsaved changes in {@link enrichUnsavedChanges} to pre-compute information to immediately update the
-         * line author gutter without needing to wait until the document is saved and the
-         * line authoring is properly computed.
-         */
-        update: (previous, transaction) =>
-            getLineAuthorAnnotation(transaction) ??
-            enrichUnsavedChanges(transaction, previous),
-        // compare cache keys.
-        // equality rate is >= 95% :)
-        // hence avoids recomputation of views
-        compare: (l, r) => l?.key === r?.key,
-    });
+export const lineAuthorState: StateField<LineAuthoringWithChanges | undefined> = StateField.define<LineAuthoringWithChanges | undefined>({
+    create: (_state) => undefined,
+    /**
+     * The state can be updated from either an annotated transaction containing
+     * the newest line authoring (for the saved document) - or from
+     * unsaved changes of the document as the user is actively typing in the editor.
+     *
+     * In the first case, we take the new line authoring and discard anything we had remembered
+     * from unsaved changes. In the second case, we use the unsaved changes in {@link enrichUnsavedChanges} to pre-compute information to immediately update the
+     * line author gutter without needing to wait until the document is saved and the
+     * line authoring is properly computed.
+     */
+    update: (previous, transaction) => getLineAuthorAnnotation(transaction) ?? enrichUnsavedChanges(transaction, previous),
+    // compare cache keys.
+    // equality rate is >= 95% :)
+    // hence avoids recomputation of views
+    compare: (l, r) => l?.key === r?.key,
+});
 
-export function laStateDigest(
-    laState: LineAuthoringWithChanges | undefined
-): Hasher {
+export function laStateDigest(laState: LineAuthoringWithChanges | undefined): Hasher {
     const digest = sha256.create();
     if (!laState) return digest;
 
     const { la, key, lineOffsetsFromUnsavedChanges } = laState;
     digest.update(la === "untracked" ? "t" : "f");
     digest.update(key);
-    for (const [k, v] of lineOffsetsFromUnsavedChanges.entries() ?? [])
-        digest.update([k, v]);
+    for (const [k, v] of lineOffsetsFromUnsavedChanges.entries() ?? []) digest.update([k, v]);
     return digest;
 }
 
@@ -170,29 +149,13 @@ export type LineAuthorSettings = {
     gutterSpacingFallbackLength: number;
 };
 
-export type LineAuthorFollowMovement =
-    | "inactive"
-    | "same-commit"
-    | "all-commits";
+export type LineAuthorFollowMovement = "inactive" | "same-commit" | "all-commits";
 
-export type LineAuthorDisplay =
-    | "hide"
-    | "full"
-    | "first name"
-    | "last name"
-    | "initials";
+export type LineAuthorDisplay = "hide" | "full" | "first name" | "last name" | "initials";
 
-export type LineAuthorDateTimeFormatOptions =
-    | "hide"
-    | "date"
-    | "datetime"
-    | "natural language"
-    | "custom";
+export type LineAuthorDateTimeFormatOptions = "hide" | "date" | "datetime" | "natural language" | "custom";
 
-export type LineAuthorTimezoneOption =
-    | "viewer-local"
-    | "author-local"
-    | "utc0000";
+export type LineAuthorTimezoneOption = "viewer-local" | "author-local" | "utc0000";
 
 // ===============================================================
 
@@ -211,10 +174,7 @@ export const latestSettings = {
     save: undefined! as (settings: LineAuthorSettings) => void,
 };
 
-export function provideSettingsAccess(
-    settingsGetter: () => LineAuthorSettings,
-    settingsSetter: (settings: LineAuthorSettings) => void
-) {
+export function provideSettingsAccess(settingsGetter: () => LineAuthorSettings, settingsSetter: (settings: LineAuthorSettings) => void) {
     latestSettings.get = settingsGetter;
     latestSettings.save = settingsSetter;
 }
@@ -222,9 +182,7 @@ export function provideSettingsAccess(
 export function maxAgeInDaysFromSettings(settings: LineAuthorSettings) {
     return (
         parseColoringMaxAgeDuration(settings.coloringMaxAge)?.asDays() ??
-        parseColoringMaxAgeDuration(
-            DEFAULT_SETTINGS.lineAuthor.coloringMaxAge
-        )!.asDays()
+        parseColoringMaxAgeDuration(DEFAULT_SETTINGS.lineAuthor.coloringMaxAge)!.asDays()
     );
 }
 
@@ -241,10 +199,7 @@ export function maxAgeInDaysFromSettings(settings: LineAuthorSettings) {
  *   `<map>.get(ln)=0` and the last line will have `<map>.get(ln)=n` where `n` is the number
  *   of added lines. If `n` is negative, then lines have been removed instead.
  */
-function enrichUnsavedChanges(
-    tr: Transaction,
-    prev: LineAuthoringWithChanges | undefined
-): LineAuthoringWithChanges | undefined {
+function enrichUnsavedChanges(tr: Transaction, prev: LineAuthoringWithChanges | undefined): LineAuthoringWithChanges | undefined {
     if (!prev) return undefined;
 
     if (!tr.changes.empty) {
@@ -274,8 +229,7 @@ function enrichUnsavedChanges(
                 // Multiple changes can be made from the current transaction
                 // as well as from previous transactions since the last document save.
                 // Hence, we want to cumulate all offsets.
-                let offset =
-                    prev.lineOffsetsFromUnsavedChanges.get(afterI) ?? 0;
+                let offset = prev.lineOffsetsFromUnsavedChanges.get(afterI) ?? 0;
 
                 const isLastLine = afterTo === afterI;
 

@@ -39,9 +39,7 @@ export class LineAuthorProvider {
         if (!file) return;
 
         if (file.path === undefined) {
-            console.warn(
-                "Git: Attempted to track change of undefined filepath. Unforeseen situation."
-            );
+            console.warn("Git: Attempted to track change of undefined filepath. Unforeseen situation.");
             return;
         }
 
@@ -55,14 +53,9 @@ export class LineAuthorProvider {
     }
 
     private async computeLineAuthorInfo(filepath: string) {
-        const gitManager =
-            this.plugin.lineAuthoringFeature.isAvailableOnCurrentPlatform()
-                .gitManager;
+        const gitManager = this.plugin.lineAuthoringFeature.isAvailableOnCurrentPlatform().gitManager;
 
-        const headRevision =
-            await gitManager.submoduleAwareHeadRevisonInContainingDirectory(
-                filepath
-            );
+        const headRevision = await gitManager.submoduleAwareHeadRevisonInContainingDirectory(filepath);
 
         const fileHash = await gitManager.hashObject(filepath);
 
@@ -86,24 +79,13 @@ export class LineAuthorProvider {
         this.notifyComputationResultToSubscribers(filepath, key);
     }
 
-    private notifyComputationResultToSubscribers(
-        filepath: string,
-        key: string
-    ) {
-        eventsPerFilePathSingleton.ifFilepathDefinedTransformSubscribers(
-            filepath,
-            (subs) =>
-                subs.forEach((sub) =>
-                    sub.notifyLineAuthoring(key, this.lineAuthorings.get(key)!)
-                )
+    private notifyComputationResultToSubscribers(filepath: string, key: string) {
+        eventsPerFilePathSingleton.ifFilepathDefinedTransformSubscribers(filepath, (subs) =>
+            subs.forEach((sub) => sub.notifyLineAuthoring(key, this.lineAuthorings.get(key)!))
         );
     }
 }
 
 // =========================================================
 
-export const enabledLineAuthorInfoExtensions: Extension = Prec.high([
-    subscribeNewEditor,
-    lineAuthorState,
-    lineAuthorGutter,
-]);
+export const enabledLineAuthorInfoExtensions: Extension = Prec.high([subscribeNewEditor, lineAuthorState, lineAuthorGutter]);

@@ -2,11 +2,7 @@
     import { Platform, Scope, setIcon } from "obsidian";
     import { SOURCE_CONTROL_VIEW_CONFIG } from "src/constants";
     import type ObsidianGit from "src/main";
-    import type {
-        FileStatusResult,
-        Status,
-        StatusRootTreeItem,
-    } from "src/types";
+    import type { FileStatusResult, Status, StatusRootTreeItem } from "src/types";
     import { CurrentGitAction, FileType } from "src/types";
     import { arrayProxyWithNewLength, getDisplayPath } from "src/utils";
     import { slide } from "svelte/transition";
@@ -38,18 +34,8 @@
     let unPushedCommits = $state(0);
 
     let showTree = $state(plugin.settings.treeStructure);
-    view.registerEvent(
-        view.app.workspace.on(
-            "obsidian-git:loading-status",
-            () => (loading = true)
-        )
-    );
-    view.registerEvent(
-        view.app.workspace.on(
-            "obsidian-git:status-changed",
-            () => void refresh().catch(console.error)
-        )
-    );
+    view.registerEvent(view.app.workspace.on("obsidian-git:loading-status", () => (loading = true)));
+    view.registerEvent(view.app.workspace.on("obsidian-git:status-changed", () => void refresh().catch(console.error)));
     if (view.plugin.cachedStatus == undefined) {
         view.plugin.refresh().catch(console.error);
     } else {
@@ -72,19 +58,14 @@
             } else {
                 btn.firstElementChild?.removeAttribute("color");
                 if (unPushedCommits > 0) {
-                    btn.firstElementChild?.setAttr(
-                        "color",
-                        "var(--text-accent)"
-                    );
+                    btn.firstElementChild?.setAttr("color", "var(--text-accent)");
                 }
             }
         });
     });
 
     view.scope = new Scope(plugin.app.scope);
-    view.scope.register(["Ctrl"], "Enter", (_: KeyboardEvent) =>
-        commitAndSync()
-    );
+    view.scope.register(["Ctrl"], "Enter", (_: KeyboardEvent) => commitAndSync());
 
     async function commit() {
         loading = true;
@@ -132,10 +113,7 @@
 
         status = plugin.cachedStatus;
         loading = false;
-        if (
-            plugin.lastPulledFiles &&
-            plugin.lastPulledFiles != lastPulledFiles
-        ) {
+        if (plugin.lastPulledFiles && plugin.lastPulledFiles != lastPulledFiles) {
             lastPulledFiles = plugin.lastPulledFiles;
 
             lastPulledFilesHierarchy = {
@@ -147,10 +125,7 @@
         }
         if (status) {
             const sort = (a: FileStatusResult, b: FileStatusResult) => {
-                return a.vaultPath
-                    .split("/")
-                    .last()!
-                    .localeCompare(getDisplayPath(b.vaultPath));
+                return a.vaultPath.split("/").last()!.localeCompare(getDisplayPath(b.vaultPath));
             };
             status.changed.sort(sort);
             status.staged.sort(sort);
@@ -178,57 +153,37 @@
 
     function stageAll() {
         loading = true;
-        plugin.promiseQueue.addTask(() =>
-            plugin.gitManager
-                .stageAll({ status: status })
-                .finally(triggerRefresh)
-        );
+        plugin.promiseQueue.addTask(() => plugin.gitManager.stageAll({ status: status }).finally(triggerRefresh));
     }
 
     function unstageAll() {
         loading = true;
-        plugin.promiseQueue.addTask(() =>
-            plugin.gitManager
-                .unstageAll({ status: status })
-                .finally(triggerRefresh)
-        );
+        plugin.promiseQueue.addTask(() => plugin.gitManager.unstageAll({ status: status }).finally(triggerRefresh));
     }
 
     function push() {
         loading = true;
-        plugin.promiseQueue.addTask(() =>
-            plugin.push().finally(triggerRefresh)
-        );
+        plugin.promiseQueue.addTask(() => plugin.push().finally(triggerRefresh));
     }
     function pull() {
         loading = true;
-        plugin.promiseQueue.addTask(() =>
-            plugin.pullChangesFromRemote().finally(triggerRefresh)
-        );
+        plugin.promiseQueue.addTask(() => plugin.pullChangesFromRemote().finally(triggerRefresh));
     }
     function discard(event: Event) {
         event.stopPropagation();
-        new DiscardModal(
-            view.app,
-            false,
-            plugin.gitManager.getRelativeVaultPath("/")
-        )
-            .myOpen()
-            .then((shouldDiscard) => {
-                if (shouldDiscard === true) {
-                    plugin.promiseQueue.addTask(() =>
-                        plugin.gitManager
-                            .discardAll({
-                                status: plugin.cachedStatus,
-                            })
-                            .finally(() => {
-                                view.app.workspace.trigger(
-                                    "obsidian-git:refresh"
-                                );
-                            })
-                    );
-                }
-            }, console.error);
+        new DiscardModal(view.app, false, plugin.gitManager.getRelativeVaultPath("/")).myOpen().then((shouldDiscard) => {
+            if (shouldDiscard === true) {
+                plugin.promiseQueue.addTask(() =>
+                    plugin.gitManager
+                        .discardAll({
+                            status: plugin.cachedStatus,
+                        })
+                        .finally(() => {
+                            view.app.workspace.trigger("obsidian-git:refresh");
+                        })
+                );
+            }
+        }, console.error);
     }
 
     let rows = $derived((commitMessage.match(/\n/g) || []).length + 1 || 1);
@@ -312,37 +267,18 @@
         </div>
     </div>
     <div class="git-commit-msg">
-        <textarea
-            {rows}
-            class="commit-msg-input"
-            spellcheck="true"
-            placeholder="Commit Message"
-            bind:value={commitMessage}
-        ></textarea>
+        <textarea {rows} class="commit-msg-input" spellcheck="true" placeholder="Commit Message" bind:value={commitMessage}></textarea>
         {#if commitMessage}
-            <div
-                class="git-commit-msg-clear-button"
-                onclick={() => (commitMessage = "")}
-                aria-label={"Clear"}
-            ></div>
+            <div class="git-commit-msg-clear-button" onclick={() => (commitMessage = "")} aria-label={"Clear"}></div>
         {/if}
     </div>
 
     <div class="nav-files-container" style="position: relative;">
         {#if status && stagedHierarchy && changeHierarchy}
             <div class="tree-item nav-folder mod-root">
-                <div
-                    class="staged tree-item nav-folder"
-                    class:is-collapsed={!stagedOpen}
-                >
-                    <div
-                        class="tree-item-self is-clickable nav-folder-title"
-                        onclick={() => (stagedOpen = !stagedOpen)}
-                    >
-                        <div
-                            class="tree-item-icon nav-folder-collapse-indicator collapse-icon"
-                            class:is-collapsed={!stagedOpen}
-                        >
+                <div class="staged tree-item nav-folder" class:is-collapsed={!stagedOpen}>
+                    <div class="tree-item-self is-clickable nav-folder-title" onclick={() => (stagedOpen = !stagedOpen)}>
+                        <div class="tree-item-icon nav-folder-collapse-indicator collapse-icon" class:is-collapsed={!stagedOpen}>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
@@ -353,13 +289,10 @@
                                 stroke-width="2"
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
-                                class="svg-icon right-triangle"
-                                ><path d="M3 8L12 17L21 8" /></svg
+                                class="svg-icon right-triangle"><path d="M3 8L12 17L21 8" /></svg
                             >
                         </div>
-                        <div class="tree-item-inner nav-folder-title-content">
-                            Staged Changes
-                        </div>
+                        <div class="tree-item-inner nav-folder-title-content">Staged Changes</div>
 
                         <div class="git-tools">
                             <div class="buttons">
@@ -379,13 +312,7 @@
                                         stroke-width="2"
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
-                                        class="svg-icon lucide-minus"
-                                        ><line
-                                            x1="4"
-                                            y1="9"
-                                            x2="14"
-                                            y2="9"
-                                        /></svg
+                                        class="svg-icon lucide-minus"><line x1="4" y1="9" x2="14" y2="9" /></svg
                                     >
                                 </div>
                             </div>
@@ -395,43 +322,21 @@
                         </div>
                     </div>
                     {#if stagedOpen}
-                        <div
-                            class="tree-item-children nav-folder-children"
-                            transition:slide|local={{ duration: 150 }}
-                        >
+                        <div class="tree-item-children nav-folder-children" transition:slide|local={{ duration: 150 }}>
                             {#if showTree}
-                                <TreeComponent
-                                    hierarchy={stagedHierarchy}
-                                    {plugin}
-                                    {view}
-                                    fileType={FileType.staged}
-                                    topLevel={true}
-                                />
+                                <TreeComponent hierarchy={stagedHierarchy} {plugin} {view} fileType={FileType.staged} topLevel={true} />
                             {:else}
                                 {#each arrayProxyWithNewLength(status.staged, 500) as stagedFile}
-                                    <StagedFileComponent
-                                        change={stagedFile}
-                                        {view}
-                                        manager={plugin.gitManager}
-                                    />
+                                    <StagedFileComponent change={stagedFile} {view} manager={plugin.gitManager} />
                                 {/each}
                                 <TooManyFilesComponent files={status.staged} />
                             {/if}
                         </div>
                     {/if}
                 </div>
-                <div
-                    class="changes tree-item nav-folder"
-                    class:is-collapsed={!changesOpen}
-                >
-                    <div
-                        onclick={() => (changesOpen = !changesOpen)}
-                        class="tree-item-self is-clickable nav-folder-title"
-                    >
-                        <div
-                            class="tree-item-icon nav-folder-collapse-indicator collapse-icon"
-                            class:is-collapsed={!changesOpen}
-                        >
+                <div class="changes tree-item nav-folder" class:is-collapsed={!changesOpen}>
+                    <div onclick={() => (changesOpen = !changesOpen)} class="tree-item-self is-clickable nav-folder-title">
+                        <div class="tree-item-icon nav-folder-collapse-indicator collapse-icon" class:is-collapsed={!changesOpen}>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 width="24"
@@ -442,22 +347,14 @@
                                 stroke-width="2"
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
-                                class="svg-icon right-triangle"
-                                ><path d="M3 8L12 17L21 8" /></svg
+                                class="svg-icon right-triangle"><path d="M3 8L12 17L21 8" /></svg
                             >
                         </div>
 
-                        <div class="tree-item-inner nav-folder-title-content">
-                            Changes
-                        </div>
+                        <div class="tree-item-inner nav-folder-title-content">Changes</div>
                         <div class="git-tools">
                             <div class="buttons">
-                                <div
-                                    data-icon="undo"
-                                    aria-label="Discard"
-                                    onclick={discard}
-                                    class="clickable-icon"
-                                >
+                                <div data-icon="undo" aria-label="Discard" onclick={discard} class="clickable-icon">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         width="24"
@@ -469,18 +366,10 @@
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
                                         class="svg-icon lucide-undo"
-                                        ><path d="M3 7v6h6" /><path
-                                            d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"
-                                        /></svg
+                                        ><path d="M3 7v6h6" /><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" /></svg
                                     >
                                 </div>
-                                <div
-                                    data-icon="plus"
-                                    aria-label="Stage"
-                                    bind:this={buttons[9]}
-                                    onclick={stageAll}
-                                    class="clickable-icon"
-                                >
+                                <div data-icon="plus" aria-label="Stage" bind:this={buttons[9]} onclick={stageAll} class="clickable-icon">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         width="24"
@@ -492,17 +381,7 @@
                                         stroke-linecap="round"
                                         stroke-linejoin="round"
                                         class="svg-icon lucide-plus"
-                                        ><line
-                                            x1="12"
-                                            y1="5"
-                                            x2="12"
-                                            y2="19"
-                                        /><line
-                                            x1="5"
-                                            y1="12"
-                                            x2="19"
-                                            y2="12"
-                                        /></svg
+                                        ><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg
                                     >
                                 </div>
                             </div>
@@ -512,25 +391,12 @@
                         </div>
                     </div>
                     {#if changesOpen}
-                        <div
-                            class="tree-item-children nav-folder-children"
-                            transition:slide|local={{ duration: 150 }}
-                        >
+                        <div class="tree-item-children nav-folder-children" transition:slide|local={{ duration: 150 }}>
                             {#if showTree}
-                                <TreeComponent
-                                    hierarchy={changeHierarchy}
-                                    {plugin}
-                                    {view}
-                                    fileType={FileType.changed}
-                                    topLevel={true}
-                                />
+                                <TreeComponent hierarchy={changeHierarchy} {plugin} {view} fileType={FileType.changed} topLevel={true} />
                             {:else}
                                 {#each arrayProxyWithNewLength(status.changed, 500) as change}
-                                    <FileComponent
-                                        {change}
-                                        {view}
-                                        manager={plugin.gitManager}
-                                    />
+                                    <FileComponent {change} {view} manager={plugin.gitManager} />
                                 {/each}
                                 <TooManyFilesComponent files={status.changed} />
                             {/if}
@@ -538,18 +404,12 @@
                     {/if}
                 </div>
                 {#if lastPulledFiles.length > 0 && lastPulledFilesHierarchy}
-                    <div
-                        class="pulled nav-folder"
-                        class:is-collapsed={!lastPulledFilesOpen}
-                    >
+                    <div class="pulled nav-folder" class:is-collapsed={!lastPulledFilesOpen}>
                         <div
                             class="tree-item-self is-clickable nav-folder-title"
-                            onclick={() =>
-                                (lastPulledFilesOpen = !lastPulledFilesOpen)}
+                            onclick={() => (lastPulledFilesOpen = !lastPulledFilesOpen)}
                         >
-                            <div
-                                class="tree-item-icon nav-folder-collapse-indicator collapse-icon"
-                            >
+                            <div class="tree-item-icon nav-folder-collapse-indicator collapse-icon">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width="24"
@@ -560,26 +420,16 @@
                                     stroke-width="2"
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
-                                    class="svg-icon right-triangle"
-                                    ><path d="M3 8L12 17L21 8" /></svg
+                                    class="svg-icon right-triangle"><path d="M3 8L12 17L21 8" /></svg
                                 >
                             </div>
 
-                            <div
-                                class="tree-item-inner nav-folder-title-content"
-                            >
-                                Recently Pulled Files
-                            </div>
+                            <div class="tree-item-inner nav-folder-title-content">Recently Pulled Files</div>
 
-                            <span class="tree-item-flair"
-                                >{lastPulledFiles.length}</span
-                            >
+                            <span class="tree-item-flair">{lastPulledFiles.length}</span>
                         </div>
                         {#if lastPulledFilesOpen}
-                            <div
-                                class="tree-item-children nav-folder-children"
-                                transition:slide|local={{ duration: 150 }}
-                            >
+                            <div class="tree-item-children nav-folder-children" transition:slide|local={{ duration: 150 }}>
                                 {#if showTree}
                                     <TreeComponent
                                         hierarchy={lastPulledFilesHierarchy}
@@ -592,9 +442,7 @@
                                     {#each lastPulledFiles as change}
                                         <PulledFileComponent {change} {view} />
                                     {/each}
-                                    <TooManyFilesComponent
-                                        files={lastPulledFiles}
-                                    />
+                                    <TooManyFilesComponent files={lastPulledFiles} />
                                 {/if}
                             </div>
                         {/if}

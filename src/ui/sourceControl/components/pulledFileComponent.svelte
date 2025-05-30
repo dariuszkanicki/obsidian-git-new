@@ -42,14 +42,7 @@
     onclick={open}
     onauxclick={(event) => {
         event.stopPropagation();
-        if (event.button == 2)
-            mayTriggerFileMenu(
-                view.app,
-                event,
-                change.vaultPath,
-                view.leaf,
-                "git-source-control"
-            );
+        if (event.button == 2) mayTriggerFileMenu(view.app, event, change.vaultPath, view.leaf, "git-source-control");
         else open(event);
     }}
     class="tree-item nav-file"
@@ -64,9 +57,7 @@
             {getDisplayPath(change.vaultPath)}
         </div>
         <div class="git-tools">
-            <span class="type" data-type={change.workingDir}
-                >{change.workingDir}</span
-            >
+            <span class="type" data-type={change.workingDir}>{change.workingDir}</span>
         </div>
     </div>
 </main>

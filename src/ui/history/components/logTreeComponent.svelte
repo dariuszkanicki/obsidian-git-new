@@ -36,24 +36,15 @@
                 <LogFileComponent diff={entity.data} {view} />
             </div>
         {:else}
-            <div
-                class="tree-item nav-folder"
-                class:is-collapsed={closed[entity.title]}
-            >
+            <div class="tree-item nav-folder" class:is-collapsed={closed[entity.title]}>
                 <div
                     class="tree-item-self is-clickable nav-folder-title"
                     data-tooltip-position={side}
                     aria-label={entity.vaultPath}
                     onclick={() => fold(entity)}
                 >
-                    <div
-                        data-icon="folder"
-                        style="padding-right: 5px; display: flex; "
-                    ></div>
-                    <div
-                        class="tree-item-icon nav-folder-collapse-indicator collapse-icon"
-                        class:is-collapsed={closed[entity.title]}
-                    >
+                    <div data-icon="folder" style="padding-right: 5px; display: flex; "></div>
+                    <div class="tree-item-icon nav-folder-collapse-indicator collapse-icon" class:is-collapsed={closed[entity.title]}>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
@@ -64,8 +55,7 @@
                             stroke-width="2"
                             stroke-linecap="round"
                             stroke-linejoin="round"
-                            class="svg-icon right-triangle"
-                            ><path d="M3 8L12 17L21 8" /></svg
+                            class="svg-icon right-triangle"><path d="M3 8L12 17L21 8" /></svg
                         >
                     </div>
                     <div class="tree-item-inner nav-folder-title-content">
@@ -74,15 +64,8 @@
                 </div>
 
                 {#if !closed[entity.title]}
-                    <div
-                        class="tree-item-children nav-folder-children"
-                        transition:slide|local={{ duration: 150 }}
-                    >
-                        <LogTreeComponent
-                            hierarchy={entity as HistoryRootTreeItem}
-                            {plugin}
-                            {view}
-                        />
+                    <div class="tree-item-children nav-folder-children" transition:slide|local={{ duration: 150 }}>
+                        <LogTreeComponent hierarchy={entity as HistoryRootTreeItem} {plugin} {view} />
                     </div>
                 {/if}
             </div>

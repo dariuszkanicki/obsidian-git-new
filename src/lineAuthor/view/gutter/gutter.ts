@@ -21,12 +21,7 @@ import { enrichCommitInfoForContextMenu } from "src/lineAuthor/view/contextMenu"
 import { coloringBasedOnCommitAge } from "src/lineAuthor/view/gutter/coloring";
 import { chooseNewestCommit } from "src/lineAuthor/view/gutter/commitChoice";
 import type { BlameCommit } from "src/types";
-import {
-    impossibleBranch,
-    prefixOfLengthAsWhitespace,
-    resizeToLength,
-    strictDeepEqual,
-} from "src/utils";
+import { impossibleBranch, prefixOfLengthAsWhitespace, resizeToLength, strictDeepEqual } from "src/utils";
 
 const VALUE_NOT_FOUND_FALLBACK = "-";
 
@@ -115,8 +110,7 @@ export class LineAuthoringGutter extends GutterMarker {
      * The age in days is recorded via {@link recordRenderedAgeInDays} to enable adaptive coloring.
      */
     public toDOM() {
-        this.precomputedDomProvider =
-            this.precomputedDomProvider ?? this.computeDom();
+        this.precomputedDomProvider = this.precomputedDomProvider ?? this.computeDom();
         return this.precomputedDomProvider();
     }
 
@@ -136,52 +130,29 @@ export class LineAuthoringGutter extends GutterMarker {
      * Prepares the DOM for this gutter.
      */
     private computeDom() {
-        const commit = chooseNewestCommit(
-            this.lineAuthoring,
-            this.startLine,
-            this.endLine
-        );
+        const commit = chooseNewestCommit(this.lineAuthoring, this.startLine, this.endLine);
 
-        let toBeRenderedText = commit.isZeroCommit
-            ? ""
-            : this.renderNonZeroCommit(commit);
+        let toBeRenderedText = commit.isZeroCommit ? "" : this.renderNonZeroCommit(commit);
 
-        const isTrueCommit =
-            !commit.isZeroCommit && this.options !== "waiting-for-result";
+        const isTrueCommit = !commit.isZeroCommit && this.options !== "waiting-for-result";
 
         if (isTrueCommit) {
             conditionallyUpdateLongestRenderedGutter(this, toBeRenderedText);
         } else {
-            toBeRenderedText = this.adaptTextForFakeCommit(
-                commit,
-                toBeRenderedText,
-                this.options
-            );
+            toBeRenderedText = this.adaptTextForFakeCommit(commit, toBeRenderedText, this.options);
         }
 
-        const domProvider = this.createHtmlNode(
-            commit,
-            toBeRenderedText,
-            this.options === "waiting-for-result"
-        );
+        const domProvider = this.createHtmlNode(commit, toBeRenderedText, this.options === "waiting-for-result");
 
         return domProvider;
     }
 
-    private createHtmlNode(
-        commit: BlameCommit,
-        text: string,
-        isWaitingGutter: boolean
-    ) {
+    private createHtmlNode(commit: BlameCommit, text: string, isWaitingGutter: boolean) {
         const templateElt = window.createDiv();
 
         templateElt.innerText = text;
 
-        const { color, daysSinceCommit } = coloringBasedOnCommitAge(
-            commit?.author?.epochSeconds,
-            commit?.isZeroCommit,
-            this.settings
-        );
+        const { color, daysSinceCommit } = coloringBasedOnCommitAge(commit?.author?.epochSeconds, commit?.isZeroCommit, this.settings);
 
         templateElt.style.backgroundColor = color;
 
@@ -200,17 +171,10 @@ export class LineAuthoringGutter extends GutterMarker {
     }
 
     private renderNonZeroCommit(commit: BlameCommit) {
-        const optionalShortHash = this.settings.showCommitHash
-            ? this.renderHash(commit)
-            : "";
+        const optionalShortHash = this.settings.showCommitHash ? this.renderHash(commit) : "";
 
         const optionalAuthorName =
-            this.settings.authorDisplay === "hide"
-                ? ""
-                : `${this.renderAuthorName(
-                      commit,
-                      this.settings.authorDisplay
-                  )}`;
+            this.settings.authorDisplay === "hide" ? "" : `${this.renderAuthorName(commit, this.settings.authorDisplay)}`;
 
         const optionalAuthoringDate =
             this.settings.dateTimeFormatOptions === "hide"
@@ -222,11 +186,7 @@ export class LineAuthoringGutter extends GutterMarker {
                       this.settings.dateTimeTimezone
                   )}`;
 
-        const parts = [
-            optionalShortHash,
-            optionalAuthorName,
-            optionalAuthoringDate,
-        ];
+        const parts = [optionalShortHash, optionalAuthorName, optionalAuthoringDate];
 
         return parts.filter((x) => x.length >= 1).join(" ");
     }
@@ -235,10 +195,7 @@ export class LineAuthoringGutter extends GutterMarker {
         return nonZeroCommit.hash.substring(0, 6);
     }
 
-    private renderAuthorName(
-        nonZeroCommit: BlameCommit,
-        authorDisplay: Exclude<LineAuthorDisplay, "hide">
-    ): string {
+    private renderAuthorName(nonZeroCommit: BlameCommit, authorDisplay: Exclude<LineAuthorDisplay, "hide">): string {
         const name = nonZeroCommit?.author?.name ?? "";
         const words = name.split(" ").filter((word) => word.length >= 1); // non-empty words
 
@@ -275,8 +232,7 @@ export class LineAuthoringGutter extends GutterMarker {
         dateTimeTimezone: LineAuthorTimezoneOption
     ) {
         const FALLBACK_COMMIT_DATE = "?";
-        if (nonZeroCommit?.author?.epochSeconds === undefined)
-            return FALLBACK_COMMIT_DATE;
+        if (nonZeroCommit?.author?.epochSeconds === undefined) return FALLBACK_COMMIT_DATE;
 
         let dateTimeFormatting: string | ((time: moment.Moment) => string);
 
@@ -302,9 +258,7 @@ export class LineAuthoringGutter extends GutterMarker {
                 return impossibleBranch(dateTimeFormatOptions);
         }
 
-        let authoringDate: moment.Moment = moment.unix(
-            nonZeroCommit.author.epochSeconds
-        );
+        let authoringDate: moment.Moment = moment.unix(nonZeroCommit.author.epochSeconds);
 
         // moment usually shows the above authoring date in the viewer local timezone.
         // when we want to show it in the absolute UTC time-zone, we'll need to provide
@@ -313,16 +267,12 @@ export class LineAuthoringGutter extends GutterMarker {
             case "viewer-local": // moment uses local timezone by default.
                 break;
             case "author-local":
-                authoringDate = authoringDate.utcOffset(
-                    nonZeroCommit.author.tz
-                );
-                if (typeof dateTimeFormatting === "string")
-                    dateTimeFormatting += " Z"; // add explicit time-zone, as this is not clear now.
+                authoringDate = authoringDate.utcOffset(nonZeroCommit.author.tz);
+                if (typeof dateTimeFormatting === "string") dateTimeFormatting += " Z"; // add explicit time-zone, as this is not clear now.
                 break;
             case "utc0000":
                 authoringDate = authoringDate.utc(); // convert to utc
-                if (typeof dateTimeFormatting === "string")
-                    dateTimeFormatting += "[Z]"; // add "Z" to indicate, that this is UTC+0000 time.
+                if (typeof dateTimeFormatting === "string") dateTimeFormatting += "[Z]"; // add "Z" to indicate, that this is UTC+0000 time.
                 break;
             default:
                 return impossibleBranch(dateTimeTimezone);
@@ -336,11 +286,7 @@ export class LineAuthoringGutter extends GutterMarker {
         }
     }
 
-    private adaptTextForFakeCommit(
-        commit: BlameCommit,
-        toBeRenderedText: string,
-        options?: "waiting-for-result"
-    ) {
+    private adaptTextForFakeCommit(commit: BlameCommit, toBeRenderedText: string, options?: "waiting-for-result") {
         // attempt to use longest text as template for fake commit.
         const original = getLongestRenderedGutter()?.text ?? toBeRenderedText;
 
@@ -348,38 +294,21 @@ export class LineAuthoringGutter extends GutterMarker {
         // the % is used to make the UI update from % to the true characters unintrusive
         // waiting-for-result has higher priority than zero commit
         const fillCharacter =
-            options !== "waiting-for-result" && commit.isZeroCommit
-                ? NEW_CHANGE_CHARACTER
-                : UNINTRUSIVE_CHARACTER_FOR_WAITING_RENDERING;
+            options !== "waiting-for-result" && commit.isZeroCommit ? NEW_CHANGE_CHARACTER : UNINTRUSIVE_CHARACTER_FOR_WAITING_RENDERING;
 
-        toBeRenderedText = original.replace(
-            NON_WHITESPACE_REGEXP,
-            fillCharacter
-        );
+        toBeRenderedText = original.replace(NON_WHITESPACE_REGEXP, fillCharacter);
 
         // Adapt the text to the same length as previously rendered gutters.
         // This ensures, that the frequent UI updates with differing line author lengths
         // don't frequently shift the gutter size - which would also cause distracting UI updates.
-        const desiredTextLength =
-            latestSettings.get()?.gutterSpacingFallbackLength ??
-            toBeRenderedText.length;
+        const desiredTextLength = latestSettings.get()?.gutterSpacingFallbackLength ?? toBeRenderedText.length;
 
-        toBeRenderedText = resizeToLength(
-            toBeRenderedText,
-            desiredTextLength,
-            fillCharacter
-        );
+        toBeRenderedText = resizeToLength(toBeRenderedText, desiredTextLength, fillCharacter);
 
         // For new changes, show only the a few + characters.
         if (options !== "waiting-for-result" && commit.isZeroCommit) {
-            const numberOfLastCharactersToKeep = Math.min(
-                desiredTextLength,
-                NEW_CHANGE_NUMBER_OF_CHARACTERS
-            );
-            toBeRenderedText = prefixOfLengthAsWhitespace(
-                toBeRenderedText,
-                desiredTextLength - numberOfLastCharactersToKeep
-            );
+            const numberOfLastCharactersToKeep = Math.min(desiredTextLength, NEW_CHANGE_NUMBER_OF_CHARACTERS);
+            toBeRenderedText = prefixOfLengthAsWhitespace(toBeRenderedText, desiredTextLength - numberOfLastCharactersToKeep);
         }
 
         return toBeRenderedText;
@@ -410,14 +339,7 @@ export function lineAuthoringGutterMarker(
     const cached = gutterInstances.get(cacheKey);
     if (cached) return cached;
 
-    const result = new LineAuthoringGutter(
-        la,
-        startLine,
-        endLine,
-        key,
-        settings,
-        options
-    );
+    const result = new LineAuthoringGutter(la, startLine, endLine, key, settings, options);
     gutterInstances.set(cacheKey, result);
     return result;
 }

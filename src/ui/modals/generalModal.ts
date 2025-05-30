@@ -28,9 +28,7 @@ const generalModalConfigDefaults: GeneralModalConfig = {
 };
 
 export class GeneralModal extends SuggestModal<string> {
-    resolve: (
-        value: string | undefined | PromiseLike<string | undefined>
-    ) => void;
+    resolve: (value: string | undefined | PromiseLike<string | undefined>) => void;
     config: GeneralModalConfig;
 
     constructor(plugin: ObsidianGit, config: OptionalGeneralModalConfig) {
@@ -39,9 +37,7 @@ export class GeneralModal extends SuggestModal<string> {
         this.setPlaceholder(this.config.placeholder);
         if (this.config.obscure) {
             this.inputEl.type = "password";
-            const promptContainer = this.containerEl.querySelector(
-                ".prompt-input-container"
-            )!;
+            const promptContainer = this.containerEl.querySelector(".prompt-input-container")!;
             promptContainer.addClass("git-obscure-prompt");
             promptContainer.setAttr("git-is-obscured", "true");
             const obscureSwitchButton = promptContainer?.createDiv({

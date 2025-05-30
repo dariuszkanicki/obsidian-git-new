@@ -50,10 +50,7 @@ export const getLongestRenderedGutter = () => longestRenderedGutter;
  *
  * If bigger, then update the global variable and persist the settings via {@link latestSettings.save}
  */
-export function conditionallyUpdateLongestRenderedGutter(
-    gutter: LineAuthoringGutter,
-    text: string
-) {
+export function conditionallyUpdateLongestRenderedGutter(gutter: LineAuthoringGutter, text: string) {
     const length = text.length;
 
     if (length < (longestRenderedGutter?.length ?? 0)) return;
@@ -105,10 +102,7 @@ export const gutterInstances: Map<string, LineAuthoringGutter> = new Map();
  * Despite the computation of the document digest and line-blocks, the performance
  * was measured to be faster with the caching.
  */
-export const gutterMarkersRangeSet: Map<
-    string,
-    RangeSet<GutterMarker>
-> = new Map();
+export const gutterMarkersRangeSet: Map<string, RangeSet<GutterMarker>> = new Map();
 
 /**
  * Stores all DOM-attached gutter elements so that they can be checked for being

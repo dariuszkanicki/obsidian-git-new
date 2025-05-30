@@ -2,10 +2,7 @@ import type { Extension } from "@codemirror/state";
 import type { EventRef, TAbstractFile, WorkspaceLeaf } from "obsidian";
 import { MarkdownView, Platform, TFile } from "obsidian";
 import { SimpleGit } from "src/gitManager/simpleGit";
-import {
-    LineAuthorProvider,
-    enabledLineAuthorInfoExtensions,
-} from "src/lineAuthor/lineAuthorProvider";
+import { LineAuthorProvider, enabledLineAuthorInfoExtensions } from "src/lineAuthor/lineAuthorProvider";
 import type { LineAuthorSettings } from "src/lineAuthor/model";
 import { provideSettingsAccess } from "src/lineAuthor/model";
 import { handleContextMenu } from "src/lineAuthor/view/contextMenu";
@@ -89,10 +86,7 @@ export class LineAuthoringFeature {
     } {
         return {
             available: this.plg.useSimpleGit && Platform.isDesktopApp,
-            gitManager:
-                this.plg.gitManager instanceof SimpleGit
-                    ? this.plg.gitManager
-                    : undefined!,
+            gitManager: this.plg.gitManager instanceof SimpleGit ? this.plg.gitManager : undefined!,
         };
     }
 
@@ -157,64 +151,40 @@ export class LineAuthoringFeature {
 
     private handleWorkspaceLeaf = (leaf: WorkspaceLeaf) => {
         if (!this.lineAuthorInfoProvider) {
-            console.warn(
-                "Git: undefined lineAuthorInfoProvider. Unexpected situation."
-            );
+            console.warn("Git: undefined lineAuthorInfoProvider. Unexpected situation.");
             return;
         }
         const obsView = leaf?.view;
 
-        if (
-            !(obsView instanceof MarkdownView) ||
-            obsView.file == null ||
-            obsView?.allowNoFile === true
-        )
-            return;
+        if (!(obsView instanceof MarkdownView) || obsView.file == null || obsView?.allowNoFile === true) return;
 
-        this.lineAuthorInfoProvider
-            .trackChanged(obsView.file)
-            .catch(console.error);
+        this.lineAuthorInfoProvider.trackChanged(obsView.file).catch(console.error);
     };
 
     private createFileOpenEvent(): EventRef {
         return this.plg.app.workspace.on(
             "file-open",
-            (file: TFile) =>
-                void this.lineAuthorInfoProvider
-                    ?.trackChanged(file)
-                    .catch(console.error)
+            (file: TFile) => void this.lineAuthorInfoProvider?.trackChanged(file).catch(console.error)
         );
     }
 
     private createWorkspaceLeafChangeEvent(): EventRef {
-        return this.plg.app.workspace.on(
-            "active-leaf-change",
-            this.handleWorkspaceLeaf
-        );
+        return this.plg.app.workspace.on("active-leaf-change", this.handleWorkspaceLeaf);
     }
 
     private createFileRenameEvent(): EventRef {
-        return this.plg.app.vault.on(
-            "rename",
-            (file, _old) =>
-                file instanceof TFile &&
-                this.lineAuthorInfoProvider?.trackChanged(file)
-        );
+        return this.plg.app.vault.on("rename", (file, _old) => file instanceof TFile && this.lineAuthorInfoProvider?.trackChanged(file));
     }
 
     private createVaultFileModificationHandler() {
         return this.plg.app.vault.on(
             "modify",
-            (anyPath: TAbstractFile) =>
-                anyPath instanceof TFile &&
-                this.lineAuthorInfoProvider?.trackChanged(anyPath)
+            (anyPath: TAbstractFile) => anyPath instanceof TFile && this.lineAuthorInfoProvider?.trackChanged(anyPath)
         );
     }
 
     private createCssRefreshHandler(): EventRef {
-        return this.plg.app.workspace.on("css-change", () =>
-            this.refreshLineAuthorViews()
-        );
+        return this.plg.app.workspace.on("css-change", () => this.refreshLineAuthorViews());
     }
 
     private createGutterContextMenuHandler() {
