@@ -1,0 +1,66 @@
+{
+  "name": "@dkani/obsidian-settings-ui",
+  "version": "1.0.2",
+  "description": "Reusable UI components for Obsidian plugin settings",
+  "type": "module",
+  "main": "./dist/lib/index.js",
+  "types": "./dist/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/lib/index.js",
+      "types": "./dist/lib/index.d.ts"
+    },
+    "./inject-css": {
+      "import": "./dist/scripts/inject-prefixed-styles.js",
+      "node": "./dist/scripts/inject-prefixed-styles.js",
+      "types": "./dist/scripts/inject-prefixed-styles.d.ts"
+    }
+  },
+  "files": [
+    "dist/lib",
+    "dist/scripts",
+    "styles/source-styles.css"
+  ],
+  "scripts": {
+    "test:inject": "pnpm build && node dist/lib/utils/inject-styles.js",
+    "test:doc": "pnpm build && node dist/lib/utils/doc/extract-types.js",
+    "test:docall": "pnpm build && node dist/lib/utils/generate-all-types-docs.js",
+    "doc": "cls && pnpm build && node dist/lib/utils/doc/generate-doc.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "build": "node build.mjs && tsc -p tsconfig.scripts.json",
+    "yalc:publish": "pnpm build && yalc publish",
+    "yalc:push": "pnpm yalc:publish && yalc push",
+    "watch1": "chokidar src/**/* styles/**/* --ignore dist/**/* -c \"pnpm yalc:push\"",
+    "watch": "chokidar src/**/* styles/**/* --ignore dist/**/* -c \"pnpm yalc:publish:safe\"",
+    "yalc:publish:safe": "tsx src/bin/publish-safe.ts",
+    "watch_doc": "chokidar src/**/* styles/**/* --ignore dist/**/* -c \"pnpm doc\""
+  },
+  "keywords": [
+    "obsidian",
+    "plugin",
+    "settings",
+    "ui"
+  ],
+  "author": "Dariusz Kanicki",
+  "license": "MIT",
+  "dependencies": {
+    "@simonwep/pickr": "^1.9.1",
+    "chalk": "^5.4.1",
+    "color-name": "^2.0.0",
+    "color-string": "^2.0.1",
+    "colord": "^2.9.3",
+    "lucide": "^0.487.0",
+    "lucide-static": "^0.487.0",
+    "source-map-support": "^0.5.21",
+    "ts-morph": "^25.0.1"
+  },
+  "peerDependencies": {
+    "obsidian": "^1.8.7"
+  },
+  "yalcSig": "78b65958f6fb334da553f8064909b4c3"
+}
