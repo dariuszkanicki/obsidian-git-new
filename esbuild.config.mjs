@@ -65,9 +65,11 @@ const context = await esbuild.context({
 
 if (prod) {
     await context.rebuild();
-    deploy();
+    await deploy();
     process.exit(0);
 } else {
-    await context.watch();
-    deploy();
+    // await context.watch();
+    await context.rebuild();
+    await deploy();
+    process.exit(0);
 }
