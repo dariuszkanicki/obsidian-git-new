@@ -1,8 +1,0 @@
-{
-  "version": "v1",
-  "packages": {
-    "@dkani/obsidian-settings-ui": {
-      "signature": "78b65958f6fb334da553f8064909b4c3"
-    }
-  }
-}
