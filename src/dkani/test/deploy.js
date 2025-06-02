@@ -61,6 +61,9 @@ function deploy() {
                     ];
                     assets.push(["dkani/config/obsidian_askpass.sh", "dist/obsidian_askpass.sh"]);
                     assets.push(["dkani/config/data.json", "dist/data.json"]);
+                    assets.push(["dkani/config/settings-en.json", "dist/settings-en.json"]);
+                    assets.push(["dkani/config/settings-de.json", "dist/settings-de.json"]);
+                    assets.push(["dkani/config/settings-pl.json", "dist/settings-pl.json"]);
                     return [4 /*yield*/, Promise.all(assets.map(function (_a) {
                             var src = _a[0], dest = _a[1];
                             return (0, promises_1.copyFile)(src, dest);
