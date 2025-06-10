@@ -1209,7 +1209,7 @@ I strongly recommend to use "Source mode" for viewing the conflicted files. For 
         }
 
         this.setPluginState({ gitAction: CurrentGitAction.idle });
-        if (this.settings.showErrorNotices) {
+        if (!this.settings.disableErrorNotice) {
             new Notice(error.message, timeout);
         }
         console.error(`${this.manifest.id}:`, error.stack);

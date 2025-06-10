@@ -160,8 +160,8 @@
         "label": "Zeilen-Autor-Anzeige"
     },
     {
-        "id": "lineAuthor.showLineAuthor",
-        "label": "Neben jeder Zeile"
+        "id": "lineAuthor.show",
+        "label": "Neben jeder Zeile anzeigen"
     },
     {
         "id": "lineAuthor.followMovement",
@@ -271,11 +271,16 @@
     },
     {
         "id": "refreshSourceControl",
-        "label": "Bei Dateiänderung aktualisieren"
+        "label": "Bei Dateiänderung aktualisieren",
+        "tooltip": [
+            "Quellcode-Verwaltungsansicht bei Dateiänderungen automatisch aktualisieren.",
+            "Auf langsameren Systemen kann dies zu Verzögerungen führen. In diesem Fall einfach diese Option deaktivieren."
+        ]
     },
     {
         "id": "refreshSourceControlTimer",
-        "label": "Aktualisierungsintervall"
+        "label": "Aktualisierungsintervall",
+        "tooltip": "Millisekunden, die nach einer Dateiänderung gewartet werden, bevor die Quellcode-Verwaltungsansicht aktualisiert wird."
     },
 
     {
@@ -285,8 +290,12 @@
     },
     {
         "id": "diffStyle",
-        "label": "Autor anzeigen",
-        "tooltip": "Stil der Diff-Ansicht. Hinweis: Der tatsächliche Diff im `Split`-Modus wird nicht von Git generiert, sondern vom Editor selbst und kann daher abweichen. Vorteil: Text in dieser Ansicht ist bearbeitbar."
+        "label": "Stil der Diff-Ansicht",
+        "tooltip": [
+            "Beachten Sie, dass das tatsächliche Diff im `Split`-Modus nicht von Git,",
+            "sondern vom Editor selbst erzeugt wird – es kann also vom Git-Diff abweichen. ",
+            "Ein Vorteil davon ist, dass Sie den Text in dieser Ansicht bearbeiten können."
+        ]
     },
     {
         "id": "diffStyle.git_unified",
@@ -302,7 +311,7 @@
         "tooltip": "Informative Benachrichtigungen für Git-Operationen deaktivieren (Statusleiste für Updates beachten)."
     },
     {
-        "id": "showErrorNotices",
+        "id": "disableErrorNotice",
         "label": "Fehlerbenachrichtigungen deaktivieren",
         "tooltip": "Alle Fehlerbenachrichtigungen deaktivieren (Statusleiste für Updates beachten)."
     },

@@ -9,6 +9,8 @@ export const GIT_LINE_AUTHORING_MOVEMENT_DETECTION_MINIMAL_LENGTH = 40;
 export const CONFLICT_OUTPUT_FILE = "conflict-files-obsidian-git.md";
 
 export const DEFAULT_SETTINGS: ObsidianGitSettings = {
+    saveIntervalType: "autoSaveIntervalInGeneral",
+
     commitMessage: "vault backup: {{date}}",
     autoCommitMessage: "vault backup: {{date}}",
     commitDateFormat: DATE_TIME_FORMAT_SECONDS,
@@ -19,7 +21,7 @@ export const DEFAULT_SETTINGS: ObsidianGitSettings = {
     disablePush: false,
     pullBeforePush: true,
     disablePopups: false,
-    showErrorNotices: true,
+    disableErrorNotice: false,
     disablePopupsForNoChanges: false,
     listChangedFilesInMessageBody: false,
     showStatusBar: true,

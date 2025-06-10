@@ -1,6 +1,8 @@
 import type { LineAuthorSettings } from "src/lineAuthor/model";
 
 export interface ObsidianGitSettings {
+    saveIntervalType: "autoSaveIntervalInGeneral" | "autoBackupAfterFileChange" | "setLastSaveToLastCommit";
+
     commitMessage: string;
     autoCommitMessage: string;
     commitDateFormat: string;
@@ -27,7 +29,7 @@ export interface ObsidianGitSettings {
     /**
      * Whether messages from {@link ObsidianGit.displayError} should be shown
      */
-    showErrorNotices: boolean;
+    disableErrorNotice: boolean;
     disablePopupsForNoChanges: boolean;
     listChangedFilesInMessageBody: boolean;
     showStatusBar: boolean;
@@ -38,7 +40,12 @@ export interface ObsidianGitSettings {
      */
     gitPath?: string;
     customMessageOnAutoBackup: boolean;
+
+    /**
+     * @deprecated Using `saveIntervalType` instead
+     */
     autoBackupAfterFileChange: boolean;
+
     treeStructure: boolean;
     /**
      * @deprecated Using `localstorage` instead
@@ -57,7 +64,12 @@ export interface ObsidianGitSettings {
     refreshSourceControlTimer: number;
     showBranchStatusBar: boolean;
     lineAuthor: LineAuthorSettings;
+
+    /**
+     * @deprecated Using `saveIntervalType` instead
+     */
     setLastSaveToLastCommit: boolean;
+
     gitDir: string;
     showFileMenu: boolean;
     authorInHistoryView: ShowAuthorInHistoryView;

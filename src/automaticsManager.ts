@@ -80,7 +80,7 @@ export default class AutomaticsManager {
      * is set to the last commit time.
      */
     private async setUpAutoCommitAndSync() {
-        if (this.plugin.settings.setLastSaveToLastCommit) {
+        if (this.plugin.settings.saveIntervalType === "setLastSaveToLastCommit") {
             this.clearAutoCommitAndSync();
             const lastCommitDate = await this.plugin.gitManager.getLastCommitTime();
             if (lastCommitDate) {
@@ -100,7 +100,7 @@ export default class AutomaticsManager {
 
     private startAutoCommitAndSync(minutes?: number) {
         let time = (minutes ?? this.plugin.settings.autoSaveInterval) * 60000;
-        if (this.plugin.settings.autoBackupAfterFileChange) {
+        if (this.plugin.settings.saveIntervalType === "autoBackupAfterFileChange") {
             if (minutes === 0) {
                 this.doAutoCommitAndSync();
             } else {
@@ -119,7 +119,7 @@ export default class AutomaticsManager {
             async () => {
                 // Re-check if the auto commit should run now or be postponed,
                 // because the last commit time has changed
-                if (this.plugin.settings.setLastSaveToLastCommit) {
+                if (this.plugin.settings.saveIntervalType === "setLastSaveToLastCommit") {
                     const lastCommitDate = await this.plugin.gitManager.getLastCommitTime();
                     if (lastCommitDate) {
                         this.saveLastAuto(lastCommitDate, "backup");

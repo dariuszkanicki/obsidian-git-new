@@ -607,6 +607,7 @@
 
 
 
+
 /* >>> Begin of generated styles @dkani */
 .obsidian-git-dkani-ui-howto,
 .obsidian-git-dkani-ui-group {
@@ -783,13 +784,13 @@ input.obsidian-git-dkani-ui-item-short {
 }
 
 .obsidian-git-dkani-ui-tooltip-icon-warning {
-  font-size: 1em;
+  font-size: 1.1em;
   vertical-align: 0px;
   color: orangered;
 }
 
 .obsidian-git-dkani-ui-tooltip-icon-info {
-  font-size: 0.7em; /* Smaller text */
+  font-size: 0.8em; /* Smaller text */
   vertical-align: 1px;
 }
 
@@ -801,7 +802,6 @@ input.obsidian-git-dkani-ui-item-short {
   line-height: 1;
   user-select: none;
   display: inline-block;
-  font-size: 10px;
 }
 
 .obsidian-git-dkani-ui-tooltip-icon-info:hover,
@@ -962,6 +962,8 @@ input.obsidian-git-dkani-ui-item-short {
 /* defaultValue vertical bar === END */
 
 /* <<< End of generated styles @dkani */
+
+
 
 
 

@@ -160,8 +160,8 @@
         "label": "Wyświetlanie informacji o autorze linii"
     },
     {
-        "id": "lineAuthor.showLineAuthor",
-        "label": "Obok każdej linii"
+        "id": "lineAuthor.show",
+        "label": "Pokaż obok każdej linii"
     },
     {
         "id": "lineAuthor.followMovement",
@@ -271,11 +271,16 @@
     },
     {
         "id": "refreshSourceControl",
-        "label": "Odśwież przy zmianie pliku"
+        "label": "Odśwież przy zmianie pliku",
+        "tooltip": [
+            "Automatyczne odświeżanie widoku kontroli wersji po zmianach w plikach.",
+            "Na wolniejszych komputerach może to powodować opóźnienia. W takim przypadku wystarczy wyłączyć tę opcję."
+        ]
     },
     {
         "id": "refreshSourceControlTimer",
-        "label": "Interwał odświeżania"
+        "label": "Interwał odświeżania",
+        "tooltip": "Czas w milisekundach oczekiwania po zmianie pliku przed odświeżeniem widoku kontroli wersji."
     },
 
     {
@@ -285,8 +290,12 @@
     },
     {
         "id": "diffStyle",
-        "label": "Pokaż autora",
-        "tooltip": "Ustaw styl widoku diff. Uwaga: Rzeczywisty diff w trybie `Split` nie jest generowany przez Git, ale przez edytor i może się różnić. Zaleta: tekst w tym widoku można edytować."
+        "label": "Styl widoku różnic",
+        "tooltip": [
+            "Zwróć uwagę, że w trybie `Split` rzeczywiste różnice nie są generowane przez Git,",
+            "lecz przez sam edytor, więc mogą się różnić od tych generowanych przez Git. ",
+            "Zaletą tego podejścia jest możliwość edytowania tekstu w tym widoku."
+        ]
     },
     {
         "id": "diffStyle.git_unified",
@@ -302,7 +311,7 @@
         "tooltip": "Wyłącz informacyjne powiadomienia o operacjach Git (sprawdzaj pasek statusu)."
     },
     {
-        "id": "showErrorNotices",
+        "id": "disableErrorNotice",
         "label": "Wyłącz powiadomienia o błędach",
         "tooltip": "Wyłącz wszystkie powiadomienia o błędach (sprawdzaj pasek statusu)."
     },

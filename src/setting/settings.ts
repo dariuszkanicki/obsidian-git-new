@@ -434,8 +434,8 @@ export class ObsidianGitSettingsTab extends PluginSettingTab {
             .setName("Disable error notifications")
             .setDesc("Disable errror notifications of any kind to minimize distraction (refer to status bar for updates).")
             .addToggle((toggle) =>
-                toggle.setValue(!plugin.settings.showErrorNotices).onChange(async (value) => {
-                    plugin.settings.showErrorNotices = !value;
+                toggle.setValue(!plugin.settings.disableErrorNotice).onChange(async (value) => {
+                    plugin.settings.disableErrorNotice = value;
                     await plugin.saveSettings();
                 })
             );
