@@ -99,7 +99,7 @@
     {
         "id": "commitDateFormat",
         "label": "{{date}} format",
-        "tooltip": "Specify custom date format (see also <a href='https://momentjs.com'>Moment.js</a>."
+        "tooltip": "Specify custom date format (see also <a href='https://momentjs.com'>Moment.js</a>)."
     },
     {
         "id": "hostnameReplacement",
@@ -118,7 +118,8 @@
     },
     {
         "id": "syncMethod",
-        "label": "Merge strategy"
+        "label": "Merge strategy",
+        "tooltip": "Decide how to integrate commits from your remote branch into your local branch."
     },
     {
         "id": "syncMethod.merge",
@@ -157,7 +158,12 @@
     {
         "##": "==== Group ===================================================================",
         "id": "settingGroup.lineAuthor",
-        "label": "Line author information display"
+        "label": "Line author display",
+        "tooltip": [
+            "<a href='https://publish.obsidian.md/git-doc/Line+Authoring'>Feature guide and quick examples</a>",
+            "The commit hash, author name and authoring date can all be individually toggled.",
+            "Hide everything, to only show the age-colored sidebar."
+        ]
     },
     {
         "id": "lineAuthor.show",
@@ -165,7 +171,15 @@
     },
     {
         "id": "lineAuthor.followMovement",
-        "label": "Merge strategy"
+        "label": "Follow movement and copies across files and commits",
+        "tooltip": [
+            "By default (deactivated), each line only shows the newest commit where it was changed.",
+            "With <i>same commit</i>, cut-copy-paste-ing of text is followed within the same commit and the original commit of authoring will be shown.",
+            "With <i>all commits</i>, cut-copy-paste-ing text inbetween multiple commits will be detected.",
+            "It uses <a href='https://git-scm.com/docs/git-blame'>git-blame</a> and",
+            "for matches (at least ${GIT_LINE_AUTHORING_MOVEMENT_DETECTION_MINIMAL_LENGTH} characters) within the same (or all) commit(s),",
+            "<em>the originating</em> commit's information is shown."
+        ]
     },
     {
         "id": "lineAuthor.followMovement.inactive",
@@ -181,17 +195,17 @@
     },
     {
         "id": "lineAuthor.showCommitHash",
-        "label": "Show commit hash"
+        "label": "Commit hash"
     },
     {
         "id": "lineAuthor.authorDisplay",
-        "label": "Author Name"
+        "label": "Author",
+        "tooltip": "If and how the author is displayed"
     },
     {
         "id": "lineAuthor.dateTimeFormatOptions",
         "label": "Date format"
     },
-
     {
         "id": "lineAuthor.dateTimeFormatCustomString",
         "label": "Custom date format",
@@ -201,13 +215,19 @@
     {
         "id": "lineAuthor.dateTimeTimezone",
         "label": "Timezone",
-        "tooltip": "The time-zone in which the authoring date should be shown.\nEither your local time-zone (default),\nthe author's time-zone during commit creation or\n<a href=\"https://en.wikipedia.org/wiki/UTC%C2%B100:00\">UTC±00:00</a>."
+        "tooltip": [
+            "The time-zone in which the authoring date should be shown:",
+            "`viewer-local` - your local time-zone (default),",
+            "`author-local` - the author's time-zone during commit creation or",
+            "<a href='https://en.wikipedia.org/wiki/UTC%C2%B100:00'>`UTC±00:00`</a>."
+        ]
     },
     {
         "id": "lineAuthor.coloringMaxAge",
         "label": "Oldest age in coloring",
         "tooltip": [
-            "The oldest age in the line author coloring. Everything older will have the same color.",
+            "The oldest age in the line author coloring.",
+            "Everything older will have the same color.",
             "Smallest valid age is '1d'. Currently: ${age}"
         ]
     },
@@ -221,7 +241,14 @@
     },
     {
         "id": "lineAuthor.textColorCss",
-        "label": "Text Color"
+        "label": "Text Color",
+        "tooltip": [
+            "The CSS color of the gutter text.",
+            "It is higly recommended to use <a href='https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties'>CSS variables</a> defined by themes",
+            "(e.g. `var(--text-muted)` or `var(--text-on-accent)`",
+            "because they automatically adapt to theme changes.",
+            "See: <a href='https://github.com/obsidian-community/obsidian-theme-template/blob/main/obsidian.css'>List of available CSS variables in Obsidian<a/>"
+        ]
     },
     {
         "id": "lineAuthor.textColorCss.var(--text-muted)",
@@ -240,12 +267,12 @@
     {
         "##": "==== Group ===================================================================",
         "id": "settingGroup.historyView",
-        "label": "History view",
+        "label": "History view display",
         "tooltip": "Decide what to show in the history view of the commit."
     },
     {
         "id": "authorInHistoryView",
-        "label": "Show Author"
+        "label": "Author"
     },
     {
         "id": "authorInHistoryView.hide",
@@ -261,8 +288,8 @@
     },
     {
         "id": "dateInHistoryView",
-        "label": "Show Date",
-        "tooltip": "Show the date of the commit in the history view. The {{date}} placeholder format is used to display the date."
+        "label": "Date",
+        "tooltip": "The {{date}} placeholder format is used to display the date."
     },
     {
         "##": "==== Group ===================================================================",
@@ -317,7 +344,7 @@
     },
     {
         "id": "disablePopupsForNoChanges",
-        "label": "Hide Notifications for no changes",
+        "label": "Disable Notifications for no changes",
         "tooltip": "Don't show notifications when there are no changes to commit or push."
     },
     {
@@ -347,13 +374,11 @@
     },
     {
         "id": "authorName",
-        "label": "Name",
-        "tooltip": "Author name for commit"
+        "label": "Name"
     },
     {
         "id": "authorEmail",
-        "label": "Email",
-        "tooltip": "Type in your password. You won't be able to see it again."
+        "label": "Email"
     },
     {
         "##": "==== Group ===================================================================",
@@ -368,7 +393,7 @@
     {
         "id": "password",
         "label": "Password / Personal access token",
-        "tooltip": "Type in your password. You won't be able to see it again."
+        "tooltip": "You won't be able to see it again."
     },
     {
         "##": "==== Group ===================================================================",

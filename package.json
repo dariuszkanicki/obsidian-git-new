@@ -9,6 +9,7 @@
         "watch": "chokidar src/**/* dkani/** styles/**/* --ignore dist/**/* -c \"pnpm dev\"",
         "inject:styles": "tsx dkani/scripts/inject-css-cli.ts",
         "diff:data": "tsx dkani/scripts/diff.ts",
+        "check:setting": "tsx dkani/scripts/check.ts",
         "check": "tsc --noEmit > ts-errors.log",
         "release": "standard-version",
         "lint": "eslint src",

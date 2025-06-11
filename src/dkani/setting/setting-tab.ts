@@ -9,6 +9,7 @@ import { replaceAndDisplay } from "./setting-utils";
 import { createSettingsConfig } from "./setting-config";
 import { ConversionHelper } from "./setting-conversion-helper";
 import type { LineAuthorSettings } from "src/lineAuthor/model";
+import { IsomorphicGit } from "src/gitManager/isomorphicGit";
 
 export class ObsidianNewGitSettingsTab extends ConversionHelper {
     constructor(app: App, plugin: ObsidianGit) {
@@ -110,6 +111,34 @@ export class ObsidianNewGitSettingsTab extends ConversionHelper {
     }
     updateColors(): void {
         document.body.style.setProperty("--obs-git-gutter-text", this.plugin.settings.lineAuthor!.textColorCss); //#f4f1f1
+    }
+
+    async getGitReadyUsername() {
+        return (await this.plugin.gitManager.getConfig("user.name")) ?? "";
+    }
+    async setGitReadyUsername(value: string) {
+        await this.plugin.gitManager.setConfig("user.name", value === "" ? undefined : value);
+    }
+    async getGitReadyEmail() {
+        return (await this.plugin.gitManager.getConfig("user.email")) ?? "";
+    }
+    async setGitReadyEmail(value: string) {
+        await this.plugin.gitManager.setConfig("user.email", value === "" ? undefined : value);
+    }
+    isIsomorphicGit() {
+        return this.plugin.gitManager instanceof IsomorphicGit;
+    }
+    setIsomorphicGitUsername(value: string) {
+        this.plugin.localStorage.setUsername(value);
+    }
+    getIsomorphicGitUsername() {
+        return this.plugin.localStorage.getUsername() ?? "";
+    }
+    setIsomorphicGitPassword(value: string): any {
+        this.plugin.localStorage.setPassword(value);
+    }
+    getIsomorphicGitPassword() {
+        return this.plugin.localStorage.getPassword() ?? "";
     }
 
     private isRendering = false;

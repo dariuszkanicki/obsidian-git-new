@@ -118,7 +118,8 @@
     },
     {
         "id": "syncMethod",
-        "label": "Strategia scalania"
+        "label": "Strategia scalania",
+        "tooltip": "Zdecyduj, jak zintegrować commity ze zdalnego brancha z Twoim lokalnym branchem."
     },
     {
         "id": "syncMethod.merge",
@@ -157,7 +158,12 @@
     {
         "##": "==== Group ===================================================================",
         "id": "settingGroup.lineAuthor",
-        "label": "Wyświetlanie informacji o autorze linii"
+        "label": "Wyświetlanie informacji o autorze linii",
+        "tooltip": [
+            "<a href='https://publish.obsidian.md/git-doc/Line+Authoring'>Przewodnik i przykłady</a>",
+            "Skrót commit, nazwa autora i data mogą być włączane/wyłączane indywidualnie.",
+            "Ukryj wszystko, aby pokazać tylko kolorowany pasek boczny."
+        ]
     },
     {
         "id": "lineAuthor.show",
@@ -165,7 +171,15 @@
     },
     {
         "id": "lineAuthor.followMovement",
-        "label": "Strategia scalania"
+        "label": "Śledź przenoszenie i kopiowanie między plikami i commitami",
+        "tooltip": [
+            "Domyślnie (dezaktywowane) każda linia pokazuje tylko najnowszy commit, w którym została zmieniona.",
+            "Przy ustawieniu <i>ten sam commit</i> śledzone jest wycinanie/kopiowanie/wklejanie tekstu w ramach tego samego commita i pokazany zostanie oryginalny commit autora.",
+            "Przy ustawieniu <i>wszystkie commity</i> wykrywane jest wycinanie/kopiowanie/wklejanie tekstu pomiędzy różnymi commitami.",
+            "Wykorzystuje <a href='https://git-scm.com/docs/git-blame'>git-blame</a> i",
+            "dla dopasowań (co najmniej ${GIT_LINE_AUTHORING_MOVEMENT_DETECTION_MINIMAL_LENGTH} znaków) w obrębie tego samego (lub wszystkich) commit(ów),",
+            "pokazywane są informacje o <em>oryginalnym</em> commicie."
+        ]
     },
     {
         "id": "lineAuthor.followMovement.inactive",
@@ -185,13 +199,13 @@
     },
     {
         "id": "lineAuthor.authorDisplay",
-        "label": "Nazwa autora"
+        "label": "Autor",
+        "tooltip": "Czy i jak autor jest wyświetlany"
     },
     {
         "id": "lineAuthor.dateTimeFormatOptions",
         "label": "Format daty"
     },
-
     {
         "id": "lineAuthor.dateTimeFormatCustomString",
         "label": "Niestandardowy format daty",
@@ -201,13 +215,19 @@
     {
         "id": "lineAuthor.dateTimeTimezone",
         "label": "Strefa czasowa",
-        "tooltip": "Strefa czasowa dla wyświetlania daty commita.\nAlbo lokalna strefa (domyślnie),\nstrefa autora podczas tworzenia commita lub\n<a href=\"https://en.wikipedia.org/wiki/UTC%C2%B100:00\">UTC±00:00</a>."
+        "tooltip": [
+            "Strefa czasowa dla wyświetlania daty commita.",
+            "Albo lokalna strefa (domyślnie),",
+            "strefa autora podczas tworzenia commita lub",
+            "<a href='https://en.wikipedia.org/wiki/UTC%C2%B100:00'>UTC±00:00</a>."
+        ]
     },
     {
         "id": "lineAuthor.coloringMaxAge",
         "label": "Maksymalny wiek w kolorowaniu",
         "tooltip": [
-            "Maksymalny wiek w kolorowaniu autora linii. Starsze commity mają ten sam kolor.",
+            "Maksymalny wiek w kolorowaniu autora linii.",
+            "Starsze commity mają ten sam kolor.",
             "Minimalny wiek to '1d'. Obecnie: ${age}"
         ]
     },
@@ -221,7 +241,14 @@
     },
     {
         "id": "lineAuthor.textColorCss",
-        "label": "Kolor tekstu"
+        "label": "Kolor tekstu",
+        "tooltip": [
+            "Kolor CSS tekstu marginesu (gutter).",
+            "Zaleca się używanie <a href='https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties'>zmiennych CSS</a> zdefiniowanych przez motywy",
+            "(np. `var(--text-muted)` lub `var(--text-on-accent)`),",
+            "ponieważ automatycznie dostosowują się do zmian motywu.",
+            "Zobacz: <a href='https://github.com/obsidian-community/obsidian-theme-template/blob/main/obsidian.css'>Lista dostępnych zmiennych CSS w Obsidian</a>"
+        ]
     },
     {
         "id": "lineAuthor.textColorCss.var(--text-muted)",
@@ -347,13 +374,11 @@
     },
     {
         "id": "authorName",
-        "label": "Nazwa",
-        "tooltip": "Nazwa autora dla commitów"
+        "label": "Nazwisko"
     },
     {
         "id": "authorEmail",
-        "label": "Email",
-        "tooltip": "Wpisz hasło. Nie będzie możliwe jego ponowne zobaczenie."
+        "label": "Email"
     },
     {
         "##": "==== Group ===================================================================",

@@ -200,7 +200,7 @@ export function createSettingsConfig(settingsTab: ObsidianNewGitSettingsTab, plu
                                     {
                                         type: "Dropdown",
                                         path: "lineAuthor.dateTimeTimezone",
-                                        items: [{ id: "viewer-local" }, { id: "author-local" }, { id: "utc0000" }],
+                                        items: [{ id: "viewer-local" }, { id: "author-local" }, { id: "utc0000", label: "UTC±00:00" }],
                                     },
                                     {
                                         type: "Textfield",
@@ -250,7 +250,6 @@ export function createSettingsConfig(settingsTab: ObsidianNewGitSettingsTab, plu
                     {
                         type: "Dropdown",
                         path: "authorInHistoryView",
-                        label: "Show Author",
                         items: [{ id: "hide" }, { id: "full" }, { id: "initials" }],
                     },
                     {
@@ -272,6 +271,7 @@ export function createSettingsConfig(settingsTab: ObsidianNewGitSettingsTab, plu
                         type: "Numberfield",
                         path: "refreshSourceControlTimer",
                         showIf: plugin.settings.refreshSourceControl,
+                        unit: "milliseconds",
                     },
                 ],
             },
@@ -313,6 +313,54 @@ export function createSettingsConfig(settingsTab: ObsidianNewGitSettingsTab, plu
                     {
                         type: "Toggle",
                         path: "changedFilesInStatusBar",
+                    },
+                ],
+            },
+            // gitReadyCommitAuthor
+            {
+                type: "SettingGroup",
+                id: "settingGroup.gitReadyCommitAuthor",
+                showIf: plugin.gitReady,
+                items: [
+                    {
+                        type: "Textfield",
+                        id: "authorName",
+                        handler: {
+                            getValue: () => settingsTab.getGitReadyUsername(),
+                            setValue: (value: string) => settingsTab.setGitReadyUsername(value),
+                        },
+                    },
+                    {
+                        type: "Textfield",
+                        id: "authorEmail",
+                        handler: {
+                            getValue: () => settingsTab.getGitReadyEmail(),
+                            setValue: (value: string) => settingsTab.setGitReadyEmail(value),
+                        },
+                    },
+                ],
+            },
+            // IsomorphicGit
+            {
+                type: "SettingGroup",
+                id: "settingGroup.IsomorphicGit",
+                showIf: settingsTab.isIsomorphicGit(),
+                items: [
+                    {
+                        type: "Textfield",
+                        id: "username",
+                        handler: {
+                            getValue: () => settingsTab.getIsomorphicGitUsername(),
+                            setValue: (value: string) => settingsTab.setIsomorphicGitUsername(value),
+                        },
+                    },
+                    {
+                        type: "Password",
+                        id: "password",
+                        handler: {
+                            getValue: () => settingsTab.getIsomorphicGitPassword(),
+                            setValue: (value: string) => settingsTab.setIsomorphicGitPassword(value),
+                        },
                     },
                 ],
             },
