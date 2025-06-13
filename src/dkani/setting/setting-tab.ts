@@ -1,22 +1,20 @@
-import { App, Notice, moment, type RGB } from "obsidian";
+import { Notice, moment, type RGB } from "obsidian";
 import { colord } from "colord";
-
 import type ObsidianGit from "src/main";
 import type { ObsidianGitSettings } from "src/types";
 import { DEFAULT_SETTINGS } from "src/constants";
-import { renderSettings } from ".yalc/@dkani/obsidian-settings-ui/dist/lib";
-import { replaceAndDisplay } from "./setting-utils";
+import { Renderer } from ".yalc/@dkani/obsidian-settings-ui/dist/lib";
 import { createSettingsConfig } from "./setting-config";
 import { ConversionHelper } from "./setting-conversion-helper";
 import type { LineAuthorSettings } from "src/lineAuthor/model";
 import { IsomorphicGit } from "src/gitManager/isomorphicGit";
 
 export class ObsidianNewGitSettingsTab extends ConversionHelper {
-    constructor(app: App, plugin: ObsidianGit) {
-        super(app, plugin);
-    }
-    refreshDisplayWithDelay(timeout = 80): void {
-        setTimeout(() => this.display(), timeout);
+    renderer: Renderer<ObsidianGitSettings>;
+
+    constructor(plugin: ObsidianGit) {
+        super(plugin.app, plugin);
+        this.renderer = new Renderer(plugin, plugin.settings, DEFAULT_SETTINGS, this);
     }
     setGitPath(value: string) {
         this.plugin.gitManager.updateGitPath(value);
@@ -141,40 +139,7 @@ export class ObsidianNewGitSettingsTab extends ConversionHelper {
         return this.plugin.localStorage.getPassword() ?? "";
     }
 
-    private isRendering = false;
     async display(): Promise<void> {
-        if (this.isRendering) {
-            return;
-        }
-        this.isRendering = true;
-        const scrollTop = this.containerEl.scrollTop;
-        const currentContainer = this.containerEl;
-
-        try {
-            const { containerEl } = this;
-
-            this.containerEl = await replaceAndDisplay(
-                currentContainer,
-                async (newContainer) => {
-                    await renderSettings(
-                        this.app,
-                        this.plugin,
-                        createSettingsConfig(this, this.plugin),
-                        this.plugin.settings,
-                        DEFAULT_SETTINGS,
-                        newContainer,
-                        async (newSettings: ObsidianGitSettings) => {
-                            await this.plugin.saveData(newSettings);
-                        },
-                        async () => {
-                            this.refreshDisplayWithDelay();
-                        }
-                    );
-                },
-                scrollTop
-            );
-        } finally {
-            this.isRendering = false;
-        }
+        this.containerEl = await this.renderer.display(this.containerEl, createSettingsConfig(this));
     }
 }

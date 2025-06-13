@@ -1,6 +1,4 @@
 import type { NumberConstraint, SettingsConfig } from ".yalc/@dkani/obsidian-settings-ui/dist/lib/renderer/types-api";
-import type ObsidianGit from "src/main";
-import type { ObsidianGitSettingsTab } from "src/setting/settings";
 import type { ObsidianGitSettings } from "src/types";
 import type { ObsidianNewGitSettingsTab } from "./setting-tab";
 import { SimpleGit } from "src/gitManager/simpleGit";
@@ -11,7 +9,8 @@ const intervalConstraint: NumberConstraint = {
     unit: "minutes",
 };
 
-export function createSettingsConfig(settingsTab: ObsidianNewGitSettingsTab, plugin: ObsidianGit): SettingsConfig<ObsidianGitSettings> {
+export function createSettingsConfig(settingsTab: ObsidianNewGitSettingsTab): SettingsConfig<ObsidianGitSettings> {
+    const plugin = settingsTab.plugin;
     return {
         elements: [
             // Message

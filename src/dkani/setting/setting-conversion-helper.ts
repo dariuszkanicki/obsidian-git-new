@@ -5,7 +5,7 @@ import type { ObsidianGitSettings } from "src/types";
 export abstract class ConversionHelper extends PluginSettingTab {
     constructor(
         app: App,
-        protected plugin: ObsidianGit
+        public plugin: ObsidianGit
     ) {
         super(app, plugin);
     }

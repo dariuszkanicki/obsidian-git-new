@@ -115,7 +115,7 @@ export default class ObsidianGit extends Plugin {
         await this.migrateSettings();
 
         // this.settingsTab = new ObsidianGitSettingsTab(this.app, this);
-        this.settingsTab = new ObsidianNewGitSettingsTab(this.app, this);
+        this.settingsTab = new ObsidianNewGitSettingsTab(this);
         this.addSettingTab(this.settingsTab);
 
         if (!this.localStorage.getPluginDisabled()) {
